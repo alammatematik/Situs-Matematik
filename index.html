@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Belajar Matematika Terstruktur</title>
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Teachers:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #104862;
+      --surface: #ffffff;
+      --primary: #1d4ed8;
+      --secondary: #0f172a;
+      --accent: #22c55e;
+      --muted: #6b7280;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+      font-family: 'Teachers', sans-serif;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: #ffffff;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    /* Pastikan atribut HTML "hidden" selalu benar-benar menyembunyikan elemen,
+       walau elemen itu punya class lain yang mengatur display (grid/flex/dll). */
+    [hidden] {
+      display: none !important;
+    }
+
+    .topic-video {
+      margin-top: 1rem;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #0f172a;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+    }
+
+    .embed-wrap {
+      width: min(1100px, 100%);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .embed-wrap iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      height: auto;
+      border: 0;
+      display: block;
+      max-height: 80vh;
+    }
+
+    .video-fallback {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(203,213,225,0.30);
+      text-align: center;
+    }
+
+    .video-fallback a {
+      color: #104862;
+      text-decoration: underline;
+      font-weight: 700;
+    }
+
+    .topic-video .empty {
+      color: #cbd5e1;
+      padding: 2rem;
+      text-align: center;
+    }
+    /* Logo kiri atas: hanya PNG yang terlihat dan dapat diklik */
+    .brand {
+      display: block;
+      width: fit-content;
+      height: auto;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      box-shadow: none;
+      color: inherit;
+      font: inherit;
+      line-height: 0;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .brand .logo {
+      display: block;
+      width: 200px;
+      height: auto;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      line-height: 0;
+    }
+
+    .brand .logo img {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      object-fit: contain;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(15,23,42,0.08);
+    }
+
+    .topnav {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .topnav button {
+      border: 2px solid #222;
+      border-radius: 999px;
+      padding: 0.72rem 1.25rem;
+      background: #fff;
+      color: #111;
+      font-weight: 700;
+      font-size: 1rem;
+      line-height: 1.2;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .topnav button:active {
+      transform: scale(0.96);
+      background: #fff8c9;
+    }
+
+    .page-background {
+      min-height: 100vh;
+      padding: 0 0 1rem;
+      background: var(--bg);
+    }
+
+    .hero {
+      position: relative;
+      padding: 2.5rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.96);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      margin-top: 1rem;
+    }
+
+    .hero h1 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      line-height: 1.01;
+      color: var(--secondary);
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 0 0 2rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    .hero-card {
+      position: relative;
+      padding: 2rem 1.25rem;
+      border-radius: 28px;
+      background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
+      box-shadow: var(--shadow);
+      text-align: center;
+      border: 1px solid rgba(30,70,225,0.1);
+    }
+
+    .hero-card .icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 1rem;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      background: #eef2ff;
+      font-size: 2rem;
+    }
+
+    .hero-card h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.2rem;
+    }
+
+    .hero-card p {
+      margin: 0 0 1.5rem;
+      color: var(--muted);
+    }
+
+    .hero-card button {
+      border: none;
+      background: var(--primary);
+      color: white;
+      padding: 0.85rem 1.2rem;
+      border-radius: 999px;
+      transition: filter 0.2s ease;
+    }
+
+
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    section {
+      margin-top: 2.5rem;
+      padding: 2rem 2rem;
+      background: rgba(255,255,255,0.96);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(15,23,42,0.08);
+    }
+
+    /* Supaya saat "Buka" ditekan di modal Pilih Jalur Belajar, judul section
+       (Kurikulum Sekolah / Umum / Tes Tulis) berhenti sedikit DI BAWAH topbar
+       yang sticky, bukan bersembunyi di baliknya. */
+    #kurikulum,
+    #umum,
+    #test {
+      scroll-margin-top: 120px;
+    }
+
+    section h2 {
+      margin-top: 0;
+      margin-bottom: 0.65rem;
+      font-size: 4rem;
+      color: var(--secondary);
+    }
+
+    section p.lead {
+      color: var(--muted);
+      max-width: 800px;
+      line-height: 1.8;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .level-nav {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .level-nav button {
+      width: 100%;
+      padding: 1.15rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(29,78,216,0.18);
+      background: white;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--secondary);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .level-nav button.active {
+      background: var(--primary);
+      color: white;
+      border-color: transparent;
+    }
+
+    .level-nav button:active {
+      transform: scale(0.97);
+    }
+
+    .panel-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(240px, 1fr));
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .panel-card {
+      background: #f8fafc;
+      border-radius: 24px;
+      padding: 1.5rem;
+      border: 1px solid rgba(15,23,42,0.06);
+    }
+
+    .panel-card h3 {
+      margin: 0 0 1rem;
+      font-size: 1.15rem;
+      color: #104862;
+
+    }
+
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .accordion-item {
+      border-radius: 24px;
+      border: 1px solid rgba(29,78,216,0.18);
+      background: white;
+      overflow: hidden;
+    }
+
+    .accordion-item button {
+      width: 100%;
+      text-align: left;
+      padding: 1rem 1rem;
+      border: none;
+      border-bottom: 1px solid rgba(29,78,216,0.12);
+      background: white;
+      color: var(--secondary);
+      font-weight: 700;
+      border-radius: 0;
+      touch-action: manipulation;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .accordion-item button.active {
+      background: rgba(29,78,216,0.12);
+      color: var(--primary);
+    }
+
+    .accordion-item button:active {
+      transform: scale(0.99);
+    }
+
+    .nested-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1rem 1rem 0 1rem;
+      background: #f8fafc;
+    }
+
+    .nested-list.hidden {
+      display: none;
+    }
+
+    .nested-list button {
+      border-radius: 16px;
+      padding-left: 1rem;
+    }
+
+    .item-list button {
+      width: 100%;
+      text-align: left;
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      border: 1px solid rgba(29,78,216,0.18);
+      background: white;
+      color: var(--secondary);
+      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .item-list button.active {
+      background: var(--primary);
+      color: white;
+      border-color: transparent;
+    }
+
+    .item-list button:active {
+      transform: scale(0.97);
+    }
+
+    .topic-video {
+      margin-top: 1rem;
+      border-radius: 20px;
+      overflow: hidden;
+      background: transparent;
+      min-height: auto;
+      display: grid;
+      place-items: center;
+    }
+
+    .topic-video iframe {
+      width: 100%;
+      min-height: 350px;
+      border: 0;
+    }
+
+    .topic-video .empty {
+      color: #cbd5e1;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .category-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .category-list button {
+      width: 100%;
+      padding: 1.15rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(29,78,216,0.18);
+      background: white;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--secondary);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .category-list button.active {
+      background: var(--primary);
+      color: white;
+      border-color: transparent;
+    }
+
+    .category-list button:active {
+      transform: scale(0.97);
+    }
+
+    /* Tombol pembuka Tes Tulis dibuat konsisten dengan tombol kategori Umum. */
+    .test-nav {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .test-nav button {
+      width: 100%;
+      padding: 1.15rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(29,78,216,0.18);
+      background: white;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--secondary);
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .test-nav button.active {
+      background: var(--primary);
+      color: white;
+      border-color: transparent;
+    }
+
+    .test-nav button:active {
+      transform: scale(0.98);
+    }
+
+    .launch-overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(16,72,98,0.9);
+      z-index: 150;
+      padding: 2rem;
+    }
+
+    .launch-overlay.hidden {
+      display: none;
+    }
+
+    .launch-panel {
+      width: min(980px, 100%);
+      background: white;
+      border-radius: 32px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .launch-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(15,23,42,0.12);
+      background: white;
+      color: var(--secondary);
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .launch-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .launch-header h1 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 3rem);
+      color: var(--secondary);
+    }
+
+    .launch-header p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .launch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .launch-card {
+      border-radius: 28px;
+      padding: 1.8rem 1.25rem;
+      background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
+      box-shadow: var(--shadow);
+      text-align: center;
+      border: 1px solid rgba(30,70,225,0.1);
+    }
+
+    .launch-card .icon {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 1rem;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      background: #eef2ff;
+      font-size: 2rem;
+    }
+
+    .launch-card h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.25rem;
+      color: #104862;
+    }
+
+    .launch-card p {
+      margin: 0 0 1.25rem;
+      color: var(--muted);
+    }
+
+    .launch-card button {
+      border: 1px solid transparent;
+      background: var(--primary);
+      color: white;
+      padding: 0.9rem 1.2rem;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, filter 0.2s ease;
+    }
+
+    .launch-card button:active {
+      transform: translateY(0);
+      filter: brightness(1.03);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 160;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      width: min(620px, 100%);
+      padding: 1.75rem;
+      border-radius: 28px;
+      background: white;
+      box-shadow: var(--shadow);
+      position: relative;
+      color: #0f172a;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      font-size: 1.5rem;
+    }
+
+    .modal p {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .modal-close {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      border: none;
+      background: transparent;
+      font-size: 1.3rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .modal-list {
+      display: grid;
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .modal-list div {
+      padding: 1rem 1rem;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid rgba(15,23,42,0.06);
+    }
+
+    .video-panel iframe {
+      width: 100%;
+      min-height: 360px;
+      border: 0;
+    }
+
+    .video-panel .empty {
+      color: #cbd5e1;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ===== Footer ===== */
+    .footer-wave {
+      background: var(--bg);
+      line-height: 0;
+    }
+
+    .footer-wave svg {
+      display: block;
+      width: 100%;
+      height: 140px;
+    }
+
+    .site-footer {
+      padding: 1rem 1.5rem 3rem;
+      background: #F3F6F7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      /* Menutup celah hairline (garis biru tipis) yang kadang muncul di
+         Safari/iOS akibat pembulatan sub-pixel pada SVG gelombang di
+         atasnya. Warna solid #F3F6F7 ini sama persis dengan warna
+         gelombang putih transparan di atasnya, jadi tumpukannya presisi. */
+      margin-top: -2px;
+      position: relative;
+    }
+
+    .footer-photo {
+      width: clamp(140px, 20vw, 190px);
+      height: clamp(140px, 20vw, 190px);
+      border-radius: 32px;
+      overflow: hidden;
+      background: #e2e8f0;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.75rem;
+      flex-shrink: 0;
+    }
+
+    .footer-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .footer-title {
+      max-width: 640px;
+      margin: 0 0 1.25rem;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--secondary);
+    }
+
+    .footer-text {
+      max-width: 640px;
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      text-align: justify;
+    }
+
+    .footer-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .footer-actions button {
+      border: 2px solid #222;
+      border-radius: 999px;
+      padding: 1rem 2.75rem;
+      background: #fff;
+      color: #111;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .footer-actions button:active {
+      transform: scale(0.97);
+    }
+
+
+    .donation-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15,23,42,0.55);
+      z-index: 170;
+      padding: 1.5rem;
+      box-sizing: border-box;
+    }
+
+    .donation-overlay.active {
+      display: flex;
+    }
+
+    .donation-container {
+      position: relative;
+      width: min(100%, 380px);
+      max-height: calc(100vh - 3rem);
+      overflow: auto;
+      padding: 1.5rem;
+      background: #fff;
+      border: 2px solid #222;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      box-sizing: border-box;
+      text-align: center;
+      animation: donationReveal 0.25s ease;
+    }
+
+    .donation-close {
+      position: absolute;
+      top: 0.85rem;
+      right: 0.85rem;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(15,23,42,0.12);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--secondary);
+      font-size: 1.35rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .donation-close:active {
+      transform: scale(0.94);
+    }
+
+    .donation-title {
+      margin: 0 0 1rem;
+      color: var(--secondary);
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .donation-frame {
+      width: min(100%, 300px);
+      aspect-ratio: 3 / 4;
+      margin: 0 auto;
+      padding: 8px;
+      background: #fff;
+      border: 2px solid #222;
+      border-radius: 18px;
+      box-shadow: inset 0 0 0 1px rgba(16,72,98,0.12), 0 6px 16px rgba(0,0,0,0.08);
+      box-sizing: border-box;
+    }
+
+    .donation-frame img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      border-radius: 11px;
+      background: #f4f6f8;
+    }
+
+    @keyframes donationReveal {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .footer-socials {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.85rem;
+      margin-top: 2.25rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-socials a {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 2px solid #222;
+      background: #fff;
+      color: #111;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .footer-socials a:active {
+      transform: scale(0.92);
+    }
+
+    .footer-socials svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .footer-copyright {
+      background: var(--bg);
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+
+    .footer-copyright p {
+      margin: 0;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    /* ============================================================
+       Efek hover HANYA untuk perangkat yang benar-benar punya mouse
+       (pointer halus). Di layar sentuh, style :hover ini sengaja
+       tidak pernah dimuat sama sekali — supaya tidak ada warna yang
+       "nyangkut" setelah disentuh jari (bug umum browser mobile).
+       Status "sudah dipilih" tetap memakai class .active (JS) yang
+       warnanya kontras dan tidak terpengaruh blok ini.
+       ============================================================ */
+    @media (hover: hover) and (pointer: fine) {
+      .video-fallback a:hover {
+        color: #bfdbfe;
+      }
+
+      .topnav button:hover {
+        transform: translateY(-2px);
+        background: #ffff00;
+        color: #111;
+        border-color: #222;
+      }
+
+      .hero-card button:hover {
+        filter: brightness(1.05);
+      }
+
+      .level-nav button:hover {
+        transform: translateY(-1px);
+        background: #eff6ff;
+      }
+
+      .item-list button:hover {
+        transform: translateY(-1px);
+        background: #eff6ff;
+      }
+
+      .category-list button:hover {
+        transform: translateY(-1px);
+        background: #eff6ff;
+      }
+
+      .test-nav button:hover {
+        transform: translateY(-1px);
+        background: #eff6ff;
+      }
+
+      .test-nav button.active:hover {
+        background: var(--primary);
+      }
+
+      .launch-card button:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.08);
+      }
+
+      .footer-actions button:hover {
+        transform: translateY(-2px);
+        background: #ffff00;
+        color: #111;
+        border-color: #222;
+      }
+
+      .donation-close:hover {
+        transform: translateY(-2px);
+        background: #ffff00;
+      }
+
+      .footer-socials a:hover {
+        transform: translateY(-2px);
+        background: #ffff00;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .launch-grid,
+      .panel-row {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    /* ============================================================
+       MOBILE PORTRAIT (hp tegak) — tidak menyentuh tampilan desktop
+       maupun tampilan landscape hp (yang sudah dianggap cukup baik).
+       ============================================================ */
+    @media (max-width: 640px) {
+
+      /* ---------- Topbar: dibuat tipis, logo & tombol mengecil.
+         Nav TIDAK dipaksa melebar penuh (supaya tidak menutupi sampai
+         ke tengah) — ukurannya mengikuti kontennya sendiri saja dan
+         didorong rapat ke kanan oleh justify-content:space-between
+         pada .topbar. Kecil tidak masalah asal tetap bisa ditekan. ---------- */
+      .topbar {
+        padding: 0.5rem 0.6rem;
+        gap: 0.5rem;
+      }
+
+      .brand .logo {
+        width: 38px;
+      }
+
+      .topnav {
+        flex: 0 1 auto;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        gap: 0.3rem;
+        min-width: 0;
+      }
+
+      .topnav button {
+        flex: 0 1 auto;
+        min-width: 0;
+        width: auto;
+        padding: 0.32rem 0.4rem;
+        font-size: 0.56rem;
+        line-height: 1.15;
+        border-width: 1.5px;
+        white-space: normal;
+        word-break: break-word;
+      }
+
+      /* ---------- Modal "Pilih Jalur Belajar": kompak,
+         3 kolom sejajar tanpa perlu scroll, close di kanan atas. ---------- */
+      .launch-overlay {
+        padding: 0.6rem;
+      }
+
+      .launch-panel {
+        padding: 0.85rem 0.7rem 0.9rem;
+        border-radius: 22px;
+        max-height: calc(100vh - 1.2rem);
+        overflow-y: auto;
+      }
+
+      .launch-close {
+        top: 0.55rem;
+        right: 0.55rem;
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+      }
+
+      .launch-header {
+        gap: 0.3rem;
+        margin-bottom: 0.75rem;
+        padding-right: 2.4rem;
+      }
+
+      .launch-header h1 {
+        font-size: 1.05rem;
+        line-height: 1.25;
+      }
+
+      .launch-header p {
+        font-size: 0.72rem;
+        line-height: 1.4;
+      }
+
+      .launch-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.4rem;
+      }
+
+      .launch-card {
+        padding: 0.55rem 0.3rem;
+        border-radius: 14px;
+      }
+
+      .launch-card .icon {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 0.35rem;
+        border-radius: 10px;
+        font-size: 1rem;
+      }
+
+      .launch-card h2 {
+        font-size: 0.62rem;
+        line-height: 1.2;
+        margin: 0 0 0.4rem;
+      }
+
+      /* Deskripsi disembunyikan di layar sempit supaya 3 kartu muat
+         dalam satu baris tanpa scroll; judul + ikon sudah cukup jelas. */
+      .launch-card p {
+        display: none;
+      }
+
+      .launch-card button {
+        width: 100%;
+        padding: 0.4rem 0.2rem;
+        font-size: 0.6rem;
+      }
+
+      /* ---------- Konten utama: padding dipangkas supaya video
+         embed tidak ikut menyempit karena tumpukan padding. ---------- */
+      main {
+        padding: 0 0.6rem;
+      }
+
+      section {
+        padding: 1.1rem 0.75rem;
+        border-radius: 20px;
+        margin-top: 1.5rem;
+      }
+
+      section h2 {
+        font-size: 1.55rem;
+      }
+
+      section p.lead {
+        font-size: 0.9rem;
+        line-height: 1.65;
+      }
+
+      .panel-card {
+        padding: 0.8rem;
+        border-radius: 18px;
+      }
+
+      /* Tombol jenjang (SD/SMP/SMA) & kategori Umum: tetap 3 kolom
+         sejajar seperti semula, tapi bentuknya dikecilkan jadi kotak
+         membulat (bukan lingkaran) supaya teks tidak offside. */
+      .level-nav,
+      .category-list {
+        gap: 0.4rem;
+      }
+
+      .level-nav button,
+      .category-list button {
+        padding: 0.5rem 0.3rem;
+        font-size: 0.62rem;
+        line-height: 1.2;
+        border-radius: 12px;
+        white-space: normal;
+      }
+
+      .test-nav button {
+        padding: 0.85rem 0.75rem;
+        font-size: 0.85rem;
+        border-radius: 16px;
+      }
+
+      /* Setiap level accordion (kelas -> bab -> topik) memakai
+         padding yang sangat tipis, hanya sebagai indikator "makin ke
+         dalam", supaya tidak menumpuk dan menyempitkan video embed. */
+      .nested-list {
+        padding: 0.45rem 0.35rem 0 0.35rem;
+        gap: 0.5rem;
+      }
+
+      .accordion-item button,
+      .item-list button {
+        padding: 0.7rem 0.65rem;
+        font-size: 0.85rem;
+        border-radius: 14px;
+      }
+
+      .topic-video {
+        padding: 0.35rem;
+        border-radius: 14px;
+        margin-top: 0.65rem;
+      }
+
+      .embed-wrap iframe {
+        border-radius: 12px;
+      }
+
+      /* ---------- Footer & donasi ---------- */
+      .footer-actions button {
+        padding: 0.85rem 1.75rem;
+        font-size: 1rem;
+      }
+
+      .donation-overlay {
+        padding: 0.7rem;
+      }
+
+      .donation-container {
+        padding: 1rem;
+        width: 100%;
+        border-radius: 22px;
+      }
+
+      .donation-frame {
+        width: 100%;
+        max-width: 340px;
+      }
+
+      /* Topbar mobile jauh lebih tipis dari versi desktop,
+         jadi jarak "berhenti scroll"-nya juga dikecilkan. */
+      #kurikulum,
+      #umum,
+      #test {
+        scroll-margin-top: 80px;
+      }
+    }
+
+    /* ============================================================
+       Animasi halus saat sebuah panel/accordion baru saja dibuka
+       (kelas -> bab -> topik di Kurikulum, panel topik di Umum,
+       dan panel materi di Tes Tulis). Berlaku desktop & mobile.
+       ============================================================ */
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes panelReveal {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .nested-list:not(.hidden),
+      #umum-panel:not([hidden]),
+      #test-topics-group:not([hidden]) {
+        animation: panelReveal 0.28s ease;
+      }
+    }
+
+    /* Penyesuaian tambahan untuk layar hp yang sangat sempit (mis. <380px). */
+    @media (max-width: 380px) {
+      .brand .logo {
+        width: 34px;
+      }
+
+      .topnav button {
+        font-size: 0.56rem;
+        padding: 0.35rem 0.25rem;
+      }
+
+      .level-nav button,
+      .category-list button {
+        font-size: 0.58rem;
+        padding: 0.45rem 0.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-background">
+    <header class="topbar">
+      <button class="brand" aria-label="Segarkan halaman" onclick="window.location.reload();">
+        <span class="logo"><img src="images/Logo Left Corner.png" alt="Alam Matematik"></span>
+      </button>
+      <nav class="topnav" aria-label="Navigasi utama">
+        <button type="button" data-modal="bank">Bank Soal</button>
+        <button type="button" data-modal="merch">Kertas Kopean</button>
+        <button type="button" data-modal="tools">Alat Bantu Matematik</button>
+      </nav>
+    </header>
+
+
+    <main>
+      <section id="kurikulum">
+        <h2>Kurikulum Sekolah</h2>
+        <p class="lead">Lengkap dengan video pembelajaran yang mudah dipahami. Sumber materi dan judul BAB kami dapatkan dari ebook resmi yang disediakan oleh Kemendikdasmen update terbaru. Sudah terintegrasi dengan LKPD Kurikulum Merdeka terbaru. Selamat belajar!
+
+</p>
+        <div class="level-nav" role="tablist">
+          <button type="button" data-level="sd" class="active">📚 Sekolah Dasar (SD)</button>
+          <button type="button" data-level="smp">📚 Sekolah Menengah Pertama (SMP)</button>
+          <button type="button" data-level="sma">📚 Sekolah Menengah Atas (SMA)</button>
+        </div>
+        <div class="panel-card">
+          <h3>Kurikulum</h3>
+          <div class="item-list accordion" id="kurikulum-classes"></div>
+          <div class="topic-video" id="kurikulum-video"></div>
+        </div>
+      </section>
+
+      <section id="umum">
+        <h2>Umum</h2>
+        <p class="lead">Topik matematika umum yang dapat dipelajari setiap saat. Sesuaikan dengan minat dan tahap belajar Anda.</p>
+        <div class="category-list" role="tablist">
+          <button type="button" data-category="aritmatika">Aritmatika</button>
+          <button type="button" data-category="aljabar">Aljabar</button>
+          <button type="button" data-category="geometri">Geometri</button>
+          <button type="button" data-category="calculus">Calculus</button>
+          <button type="button" data-category="statistika">Statistika</button>
+          <button type="button" data-category="logika">Logika Matematika</button>
+          <button type="button" data-category="konversi">Daftar Konversi</button>
+          <button type="button" data-category="manipulasi">Manipulasi Angka</button>
+        </div>
+        <div class="panel-card" id="umum-panel" hidden>
+          <h3 id="umum-panel-title">Kategori</h3>
+          <div class="item-list" id="umum-topics"></div>
+        </div>
+      </section>
+
+      <section id="test">
+        <h2>Tes Tulis</h2>
+        <p class="lead">Materi yang umum keluar di tes-tes seleksi kedinasan dan ujian masuk, termasuk latihan nalar, angka, dan pola.</p>
+        <div class="test-nav" role="tablist">
+          <button type="button" id="test-toggle" aria-expanded="false">📚 Buka Materi Tes Tulis</button>
+        </div>
+        <div class="panel-card" id="test-topics-group" hidden>
+          <h3 id="test-topics-title">Daftar Materi</h3>
+          <div class="item-list" id="test-topics"></div>
+        </div>
+      </section>
+    </main>
+
+    <div class="footer-wave">
+      <svg viewBox="0 0 1440 220" preserveAspectRatio="none">
+        <path d="M0,70 C240,150 480,10 720,50 C960,90 1200,20 1440,60 L1440,220 L0,220 Z" fill="rgba(255,255,255,0.95)"></path>
+      </svg>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-photo">
+        <img src="images/Profile.png" alt="Foto profil">
+      </div>
+
+      <h2 class="footer-title">Mengapa Matematika Kita Lemah?</h2>
+
+      <p class="footer-text">Saat belajar di sekolah, seringkali sebagian siswa yang belum mengerti harus ketinggalan pelajaran karena waktu guru terbatas. Ketika pelajaran berlanjut ke topik lain, siswa yang belum mengerti semakin tertinggal. Lanjut terus siklusnya hingga siswa yang sudah mengerti semakin maju, sementara yang tertinggal semakin sulit mengejar. Bahkan sebagian akhirnya membenci Matematika. 
+</p>
+
+      <p class="footer-text">Saya tidak menyalahkan guru, karena mereka juga kerja. Saya juga tidak menyalahkan murid, karena tugas mereka ya belajar. 
+</p>
+      
+      <p class="footer-text">Dengan hadirnya Alam Matematik, saya berharap situs ini bisa membantu banyak orang untuk meningkatkan kemampuan matematikanya secara bertahap. Materi utama di Alam Matematik GRATIS dan terstruktur, sehingga dapat dipelajari kembali ketika kamu tertinggal. Juga cocok apabila kamu mau akselerasi beberapa langkah ke depan. Sebagian konten premium juga akan tersedia bagi teman-teman yang ingin belajar lebih mendalam.
+</p>
+      
+      <p class="footer-text">Karena itu, saya berharap Alam Matematik dapat menjadi bagian dari perjalanan untuk membantu lebih banyak orang belajar, memahami, dan berpikir lebih baik. 
+</p>
+      
+      <p class="footer-text">Selamat belajar.
+</p>
+
+      <div class="footer-actions">
+        <button type="button" aria-expanded="false">Bantu Berkembang</button>
+      </div>
+
+
+
+      <div class="footer-socials">
+        <a href="https://www.instagram.com/alammatematik" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.3" cy="6.7" r="0.6" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+        <a href="https://www.tiktok.com/@alammatematik" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 4v9.7a3.5 3.5 0 1 1-3-3.47"/>
+            <path d="M14 4c0 2.6 1.9 4.6 4.6 4.8"/>
+          </svg>
+        </a>
+        <a href="https://x.com/alammatematik" target="_blank" rel="noopener noreferrer" aria-label="X">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M4 4l16 16"/>
+            <path d="M20 4L4 20"/>
+          </svg>
+        </a>
+        <a href="https://www.youtube.com/@AlamMatematik" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2.5" y="6" width="19" height="12" rx="4"/>
+            <path d="M10.3 9.3l5.2 2.7-5.2 2.7z" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+        <a href="https://www.facebook.com/alammatematik" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M14 8.3h-1.4a2 2 0 0 0-2 2V12H9v2h1.6v5h2v-5H14l.4-2h-1.8v-1.2c0-.4.3-.8.8-.8H14z" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+        <a href="https://www.threads.com/@alammatematik" target="_blank" rel="noopener noreferrer" aria-label="Threads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M15.2 9.4c-1-.6-2.1-1-3.2-1-2.6 0-4.5 1.8-4.5 4.2 0 2.2 1.6 3.7 3.7 3.7 1.8 0 3-.9 3.3-2.4.3-1.6-.5-3.1-2.4-3.3-1.1-.1-2 .4-2.1 1.3"/>
+          </svg>
+        </a>
+      </div>
+    </footer>
+
+    <div class="footer-copyright">
+      <p>COPYRIGHT© Alam Matematik</p>
+    </div>
+  </div>
+
+  <div class="launch-overlay" id="launchOverlay" aria-modal="true" role="dialog">
+    <div class="launch-panel">
+      <button class="launch-close" aria-label="Tutup pilihan awal" onclick="closeLaunch();">×</button>
+      <div class="launch-header">
+        <h1>Pilih jalur belajar</h1>
+        <p>Mulai dari Kurikulum Sekolah, Umum, atau Tes Tulis. Tutup panel ini kapan saja jika ingin melihat konten utama.</p>
+      </div>
+      <div class="launch-grid">
+        <div class="launch-card">
+          <div class="icon">📘</div>
+          <h2>Kurikulum Sekolah</h2>
+          <p>Pilih materi SD, SMP, dan SMA secara berjenjang.</p>
+          <button type="button" onclick="openSection('kurikulum');">Buka</button>
+        </div>
+        <div class="launch-card">
+          <div class="icon">📐</div>
+          <h2>Umum</h2>
+          <p>Pilih topik umum seperti Aljabar atau Calculus.</p>
+          <button type="button" onclick="openSection('umum');">Buka</button>
+        </div>
+        <div class="launch-card">
+          <div class="icon">🧠</div>
+          <h2>Tes Tulis</h2>
+          <p>Latihan tipe soal yang sering muncul di ujian umum dan seleksi.</p>
+          <button type="button" onclick="openSection('test');">Buka</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="donation-overlay" id="donationOverlay" aria-hidden="true">
+    <div class="donation-container" role="dialog" aria-modal="true" aria-labelledby="donationTitle">
+      <button class="donation-close" id="donationClose" type="button" aria-label="Tutup Ruang Donasi">×</button>
+      <h3 class="donation-title" id="donationTitle">Ruang Donasi</h3>
+      <div class="donation-frame">
+        <img src="images/Ruang Donasi.png" alt="Ruang Donasi">
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" aria-label="Tutup panel" onclick="closeModal();">×</button>
+      <h3 id="modalTitle">Informasi Tambahan</h3>
+      <p id="modalText">Pilih salah satu menu dan lihat pilihan di sini. Konten ini dapat Anda ubah nanti sesuai kebutuhan.</p>
+      <div class="modal-list" id="modalList"></div>
+    </div>
+  </div>
+
+  <script>
+    const launchOverlay = document.getElementById('launchOverlay');
+    const topButtons = document.querySelectorAll('[data-modal]');
+    const levelButtons = document.querySelectorAll('.level-nav button');
+    const categoryButtons = document.querySelectorAll('#umum .category-list button');
+    const classesContainer = document.getElementById('kurikulum-classes');
+    const kurikulumVideo = document.getElementById('kurikulum-video');
+    const umumTopicsContainer = document.getElementById('umum-topics');
+    const umumPanel = document.getElementById('umum-panel');
+    const umumPanelTitle = document.getElementById('umum-panel-title');
+    const testTopicsContainer = document.getElementById('test-topics');
+    const testToggle = document.getElementById('test-toggle');
+    const testTopicsGroup = document.getElementById('test-topics-group');
+    let currentUmumCategory = null;
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalText = document.getElementById('modalText');
+    const modalList = document.getElementById('modalList');
+
+    const KURIKULUM_DATA = {
+      sd: {
+        label: 'SD',
+        classes: [
+          {
+            id: 'sd-awal',
+            label: 'SD Awal (Kelas 1-3)',
+            topics: [
+              { label: 'Pengenalan Penjumlahan dari NOL', judul: 'Contoh Video Topik A', video: 'pcTLVf2UjWI' },
+              { label: 'Pengenalan Pengurangan DARI NOL', judul: 'Contoh Video Topik B', video: 'ODD_33h9owk' },
+              { label: 'Penjumlahan Bersusun 2 Digit ke Atas', judul: 'Contoh Video Topik C', video: 'dgG0U6Lj7nY' },
+              { label: 'Pengurangan Bersusun 2 Digit ke Atas', judul: 'Contoh Video Topik D', video: 'k9j2vlyhWss' }
+            ]
+          },
+          {
+            id: 'sd-akhir',
+            label: 'SD Akhir (Kelas 4-6)',
+            topics: [
+              { label: 'Perkalian Bersusun', judul: 'Contoh Video Topik A', video: 'ffg4BsACGwk' },
+              { label: 'Pembagian Bersusun', judul: 'Contoh Video Topik B', video: 'zXyxIgmrflc' },
+              { label: 'Operasi Hitung Campuran (Tambah, Kurang, Kali, Bagi)', judul: 'Contoh Video Topik C', video: '-bxMX8SY9-U' },
+              { label: 'Mencari KPK dan FPB (Pakai Pohon Faktor)', judul: 'Contoh Video Topik D', video: 'mW8EjuJogMs' },
+              { label: 'Mencari KPK dan FPB (Cara Cepat TANPA Pohon Faktor)', judul: 'Contoh Video Topik D', video: '-CN5eLaOuwE' },
+              { label: 'Konversi Satuan Panjang', judul: 'Contoh Video Topik D', video: '0Y8tP6HXNVk' },
+              { label: 'Konversi Satuan Berat', judul: 'Contoh Video Topik D', video: 'Q-4kgjKCvqo' },
+              { label: 'Belajar Pecahan dari NOL', judul: 'Contoh Video Topik D', video: 'brTw7W45flo' },
+              { label: 'Ubah Pecahan Tidak Wajar Jadi Campuran - Metode Mudah', judul: 'Contoh Video Topik D', video: 'qtuUQ9n6BdU' },
+              { label: 'Ubah Pecahan Tidak Wajar Jadi Campuran - CARA CEPAT', judul: 'Contoh Video Topik D', video: 'UkaEwW8_hK0' },
+              { label: 'Trik Coret Pecahan (Agar Cepat)', judul: 'Contoh Video Topik D', video: 'qD2TD9UZUg8' },
+              { label: 'Operasi Pecahan Campuran', judul: 'Contoh Video Topik D', video: 'VAfA5RQOe84' },
+              { label: 'Mengubah Pecahan Menjadi Desimal', judul: 'Contoh Video Topik D', video: 'sMwmIamGuZo' },
+              { label: 'Mengubah Desimal Menjadi Pecahan', judul: 'Contoh Video Topik D', video: 'vP5g2h0P66g' },
+              { label: 'Mengubah Pecahan Menjadi Persen', judul: 'Contoh Video Topik D', video: 'u9Dq7dbDaIE' },
+              { label: 'Perkenalan Aljabar: Menemukan Nilai x', judul: 'Contoh Video Topik D', video: 'OleGJkSK0kg' },
+              { label: 'Hitung Bilangan Desimal', judul: 'Contoh Video Topik D', video: 'dKlsRrS_k30' },
+              { label: 'Rasio Sederhana', judul: 'Contoh Video Topik D', video: '8nhxC6chtlU' },
+              { label: 'Cara Membaca Skala pada Peta', judul: 'Contoh Video Topik D', video: 'LuU3oOKFvWE' },
+              { label: 'Cara Hitung Diskon Berbagai Keadaan', judul: 'Contoh Video Topik D', video: 'elZzGGa9LDQ' },
+            ]
+          }
+        ]
+      },
+      smp: {
+        label: 'SMP',
+        classes: [
+          {
+            id: 'smp-7',
+            label: 'Kelas 7',
+            chapters: [
+              {
+                id: 'smp-7-a',
+                title: 'BAB 1: Bilangan Bulat',
+                topics: [
+                  { label: 'Penjumlahan Bilangan Bulat', judul: 'Contoh Video Topik A', video: 'dgG0U6Lj7nY' },
+                  { label: 'Pengurangan Bilangan Bulat', judul: 'Contoh Video Topik B', video: 'k9j2vlyhWss' },
+                  { label: 'Perkalian Bilangan Bulat - Perkalian Bersusun', judul: 'Contoh Video Topik C', video: 'ffg4BsACGwk' },
+                  { label: 'Pembagian Bilagan Bulat - Pembagian Bersusun', judul: 'Contoh Video Topik D', video: 'zXyxIgmrflc' },
+                  { label: 'Menghitung Bilangan Bulat Campuran', judul: 'Contoh Video Topik E', video: '-bxMX8SY9-U' }
+                ]
+              },
+              {
+                id: 'smp-7-b',
+                title: 'BAB 2: Bilangan Rasional (Pecahan)',
+                topics: [
+                  { label: 'Belajar Pecahan dari NOL Sampai Paham', judul: 'Contoh Video Topik A', video: 'brTw7W45flo' },
+                  { label: 'Mengubah Pecahan Tidak Wajar Jadi Campuran (Metode Akurat)', judul: 'Contoh Video Topik B', video: 'qtuUQ9n6BdU' },
+                  { label: 'Mengubah Pecahan Tidak Wajar Jadi Campuran (Metode Cepat)', judul: 'Contoh Video Topik C', video: 'UkaEwW8_hK0' },
+                  { label: 'Trik Coret pada Perkalian Bilangan Rasional', judul: 'Contoh Video Topik D', video: 'qD2TD9UZUg8' },
+                  { label: 'Membagi Pecahan dengan Bilangan Bulat', judul: 'Contoh Video Topik E', video: 'DgMhIoNFzWY' },
+                  { label: 'Membandingkan Lebih Besar/Lebih Kecil Pecahan dengan Penyebut Berbeda', judul: 'Contoh Video Topik A', video: 'mZP6ekRXKBc' },
+                  { label: 'Menghitung Pecahan di dalam Pecahan', judul: 'Contoh Video Topik B', video: 'MVU8ENF_48k' },
+                  { label: 'Mengurutkan Pecahan dari Terbesar ke Terkecil', judul: 'Contoh Video Topik C', video: 'ehqmFZGTIF4' },
+                  { label: 'Urutan Cara Hitung Operasi Campuran Pecahan', judul: 'Contoh Video Topik D', video: 'VAfA5RQOe84' },
+                  { label: 'Mengubah Pecahan Menjadi Desimal', judul: 'Contoh Video Topik E', video: 'sMwmIamGuZo' },
+                  { label: 'Mengubah Desimal Menjadi Pecahan', judul: 'Contoh Video Topik A', video: 'vP5g2h0P66g' },
+                  { label: 'Mengubah Pecahan Menjadi Persen', judul: 'Contoh Video Topik B', video: 'u9Dq7dbDaIE' },
+                  { label: 'Cara Hitung Diskon di Berbagai Keadaan', judul: 'Contoh Video Topik C', video: 'elZzGGa9LDQ' },
+                ]
+              },
+              {
+                id: 'smp-7-c',
+                title: 'BAB 3: Rasio',
+                topics: [
+                  { label: 'Pengenalan Rasio dengan Cara Paling Sederhana', judul: 'Contoh Video Topik A', video: '8nhxC6chtlU' },
+                  { label: 'Rasio Senilai dan Berbalik Nilai', judul: 'Contoh Video Topik B', video: 'ADVrOV1j3Ng' },
+                  { label: 'Rasio pada Durasi Waktu', judul: 'Contoh Video Topik C', video: 'qtZiTJDm9hw' },
+                  { label: 'Rasio dengan Konversi Panjang dan Berat', judul: 'Contoh Video Topik D', video: 'loarXAzJFzA' },
+                  { label: 'Rasio dan Kecepatan (BONUS) - Mengerti ini? Ranking 1 Menanti', judul: 'Contoh Video Topik E', video: '485EpPCPsH8' },
+                  { label: 'Cara Membaca Skala Peta dan Menghitung Jarak Sebenarnya', judul: 'Contoh Video Topik D', video: 'LuU3oOKFvWE' },
+                  { label: 'Cara Menghitung Skala, Jarak Sebenarnya, dan Jarak Pada Peta', judul: 'Contoh Video Topik E', video: '0nOWdcQyGj0' },
+                ]
+              },
+              {
+                id: 'smp-7-d',
+                title: 'BAB 4: Bentuk Aljabar',
+                topics: [
+                  { label: 'Pengenalan: Suku, Koefisien, Variabel, Konstanta', judul: 'Contoh Video Topik A', video: 'Hbfqcr2Yayo' },
+                  { label: 'Penjumlahan dan Pengurangan Aljabar', judul: 'Contoh Video Topik B', video: '-u8yZIrDJ2w' },
+                  { label: 'Perkalian Aljabar', judul: 'Contoh Video Topik C', video: 'zJShu9rR4QA' },
+                  { label: 'Menjabarkan Dua Suku Aljabar - Dua Kurung', judul: 'Contoh Video Topik D', video: 'HtzmMEPfpKQ' },
+                  { label: 'Pembagian Aljabar', judul: 'Contoh Video Topik E', video: 'GDXCVnhxrdc' },
+                  { label: 'Sifat dan Operasi Aljabar: Distributif, Komutatif, Asosiatif', judul: 'Contoh Video Topik A', video: 'z0yUMHj-1_o' },
+                  { label: 'Menyederhanakan Bilangan Aljabar Dasar', judul: 'Contoh Video Topik B', video: 'TUE5ymUV8T8' },
+                  { label: 'BONUS: Faktorisasi Aljabar dengan Metode FPB', judul: 'Contoh Video Topik C', video: '58NbLtucjuE' },
+                  { label: 'BONUS: Menemukan Nilai X pada Berbagai Bilangan Sederhana', judul: 'Contoh Video Topik D', video: 'OleGJkSK0kg' },
+                ]
+              },
+              {
+                id: 'smp-7-e',
+                title: 'BAB 5: Kesebangunan',
+                topics: [
+                  { label: 'Hubungan Antarsudut: Berpenyiku', judul: 'Contoh Video Topik A', video: 'naveUvI9W_k' },
+                  { label: 'Hubungan Antarsudut: Berpelurus', judul: 'Contoh Video Topik B', video: 'DipiOEWL7u4' },
+                  { label: 'Perbedaan Sudut Bersuplemen dan Berpelurus', judul: 'Contoh Video Topik C', video: 'tVjPyW5HOLE' },
+                  { label: 'Mencari Nilai X pada Sudut Berpelurus dan Bersuplemen', judul: 'Contoh Video Topik D', video: 'H39hr0vZjNo' },
+                  { label: 'Hubungan Antarsudut: Bertolak Belakang', judul: 'Contoh Video Topik E', video: 'GYuRRPr18hk' },
+                  { label: 'Hubungan Antarsudut: Dua Garis Sejajar - Sudut Sehadap, Berseberangan, Sepihak', judul: 'Contoh Video Topik A', video: 'sPKL4EB5prU' },
+                  { label: 'Menghitung Besar Sudut dari Informasi Kecil pada Dua Garis Sejajar Dipotong', judul: 'Contoh Video Topik B', video: '62lmvFy7Khk' },
+                  { label: 'Kesebangunan Dasar: Menentukan Besar Sisi dari Bangun Lainnya', judul: 'Contoh Video Topik C', video: 'cpmTQXb3zcQ' },
+                  { label: 'Kesebangunan pada Segitiga: Cara Menentukan Panjang Sisi Segitiga Lainnya', judul: 'Contoh Video Topik D', video: 'YZQ0GAfQJLo' },
+                  { label: 'Menentukan Tinggi Benda dari Bayangannya', judul: 'Contoh Video Topik E', video: 'LnArvqewnAE' },
+                  { label: 'Menentukan Skala dari Dua Hal Sebangun', judul: 'Contoh Video Topik A', video: 'j5hSOFLePGM' },
+                ]
+              },
+              {
+                id: 'smp-7-f',
+                title: 'BAB 6: Data dan Diagram',
+                topics: [
+                  { label: 'Membuat Diagram Batang dari Tabel dan Data Sederhana', judul: 'Contoh Video Topik A', video: 'LLcMrvjgkyA' },
+                  { label: 'Diagram Batang Rangkap Dua dan Tiga', judul: 'Contoh Video Topik B', video: 'P8Z5D-qDye0' },
+                  { label: 'Membuat Diagram Garis Biasa dan Garis Rangkap', judul: 'Contoh Video Topik C', video: 'neKtUv-KgCI' },
+                  { label: 'Diagram Lingkaran dalam Derajat', judul: 'Contoh Video Topik D', video: 'SZ5doqceyXw' },
+                  { label: 'Menyajikan Data Dalam Diagram Lingkaran Persen dan Derajat', judul: 'Contoh Video Topik E', video: 'OFy731ZFu1M' },
+                  { label: 'Menentukan Persentase Kenaikan/Penurunan dari Diagram', judul: 'Contoh Video Topik F', video: 'oIszykAsrVY' },
+                ]
+              },
+              {
+                id: 'smp-7-bonus',
+                title: '⚛️ Ilmu Alat PENTING (Bonus)',
+                topics: [
+                  { label: 'Trik Menemukan Nilai X pada Berbagai Bilangan Sederhana', judul: 'Contoh Video Topik A - Bonus', video: 'OleGJkSK0kg' },
+                  { label: 'Memfaktorkan Bentuk Aljabar dengan Metode FPB (Mudah)', judul: 'Contoh Video Topik B - Bonus', video: '58NbLtucjuE' },
+                ]
+              }
+            ]
+          },
+          {
+            id: 'smp-8',
+            label: 'Kelas 8',
+            chapters: [
+              {
+                id: 'smp-8-a',
+                title: 'BAB 1: Bilangan Berpangkat dan Bentuk Akar',
+                topics: [
+                  { label: 'Apa Itu Sebenarnya Bilangan Rasional?', judul: 'Apa Itu Sebenarnya Bilangan Rasional?', video: 'pfjsRbsTjNg' },
+                  { label: 'Eksponen Dasar dan Sifat-Sifatnya', judul: 'Eksponen Dasar dan Sifat-Sifatnya', video: 'GArRir0rzNU' },
+                  { label: 'Menyederhanakan Akar Kuadrat (²)', judul: 'Menyederhanakan Akar Kuadrat (²)', video: 'GlWoW3ya55U' },
+                  { label: 'Menyederhanakan Akar Kubik (³)', judul: 'Menyederhanakan Akar Kubik (³)', video: 'IfttjX1nmzU' },
+                  { label: 'Kuasai Bentuk Akar dengan Pohon Faktor (CARA MUDAH Tidak Diajarkan di Sekolah)', judul: 'Kuasai Bentuk Akar dengan Pohon Faktor (CARA MUDAH Tidak Diajarkan di Sekolah)', video: 'Ith93sMY_FI' },
+                  { label: 'Bilangan Berpangkat Minus', judul: 'Bilangan Berpangkat Minus', video: 'lq9ioCh4p2Q' },
+                  { label: 'Mengubah Bilangan Berpangkat Pecahan ke Akar Maupun Sebaliknya', judul: 'Mengubah Bilangan Berpangkat Pecahan ke Akar Maupun Sebaliknya', video: 'B2fHF5dlZN4' },
+                  { label: 'Penjumlahan dan Pengurangan Bentuk Akar', judul: 'Penjumlahan dan Pengurangan Bentuk Akar', video: 'pQiIl2NYXSc' },
+                  { label: 'Menyederhanakan Pecahan yang Dalam Bentuk Akar', judul: 'Menyederhanakan Pecahan yang Dalam Bentuk Akar', video: 'L_zT1cnn2WU' },
+                  { label: 'Mencari Pangkat Negatif dan Basisnya dari Bilangan Pecahan', judul: 'Mencari Pangkat Negatif dan Basisnya dari Bilangan Pecahan', video: '5YcWN2Ua_2w' },
+                  { label: 'Mengubah Pangkat Positif ke Negatif dan Sebaliknya', judul: 'Mengubah Pangkat Positif ke Negatif dan Sebaliknya', video: 'Z--4bU6m6Es' },
+                  { label: 'Jika dalam Satu Baris Banyak Bilangan dan Variabel Berbeda', judul: 'Jika dalam Satu Baris Banyak Bilangan dan Variabel Berbeda', video: 'eeJ04wnD63w' },
+                  { label: 'Mencari Nilai Pangkat dari Pecahan dalam Bentuk Akar', judul: 'Mencari Nilai Pangkat dari Pecahan dalam Bentuk Akar', video: 'liaHJvI5XAM' },
+                  { label: 'Mengubah Bentuk Akar ke Bilangan Berpangkat', judul: 'Mengubah Bentuk Akar ke Bilangan Berpangkat', video: '_PRoZqD7TnQ' },
+                  { label: 'Sifat Dasar Penjumlahan dan Pengurangan Bilangan Berpangkat', judul: 'Sifat Dasar Penjumlahan dan Pengurangan Bilangan Berpangkat', video: 'V6EJoolFhKg' },
+                  { label: 'Perkalian Bilangan Berpangkat Pecahan dan Sederhana', judul: 'Perkalian Bilangan Berpangkat Pecahan dan Sederhana', video: 'S8tqX4PmUEc' },
+                  { label: 'Pembagian Bilangan Berpangkat Pecahan dan Sederhana', judul: 'Pembagian Bilangan Berpangkat Pecahan dan Sederhana', video: 'X2hrS91hW4I' },
+                  { label: 'Penjumlahan dan Pengurangan Bentuk Akar Sederhana', judul: 'Penjumlahan dan Pengurangan Bentuk Akar Sederhana', video: 'GSDBEVBX2xQ' },
+                  { label: 'Penjumlahan dan Pengurangan Bentuk Akar Pakai Pohon Faktor VERSI 2.0', judul: 'Penjumlahan dan Pengurangan Bentuk Akar Pakai Pohon Faktor VERSI 2.0', video: 'kCVA2K_TBv8' },
+                  { label: 'MENYEDERHANAKAN Pecahan dalam Tanda Akar', judul: 'MENYEDERHANAKAN Pecahan dalam Tanda Akar', video: 'nTCebtujEPs' },
+                  { label: 'Jika Terdapat Akar dan Pangkat Berbeda dalam Satu Kurung dan Dicampur', judul: 'Jika Terdapat Akar dan Pangkat Berbeda dalam Satu Kurung dan Dicampur', video: 'MYXiRbMIvsM' },
+                  { label: 'Mengeluarkan Akar pada Bilangan Pecahan (Merasionalkan)', judul: 'Mengeluarkan Akar pada Bilangan Pecahan (Merasionalkan)', video: 'zUO7n-YmOCw' },
+                  { label: 'Merasionalkan Penyebut pada Pecahan Berakar VERSI 2.0', judul: 'Merasionalkan Penyebut pada Pecahan Berakar VERSI 2.0', video: 'AWDfE5hU-YY' },
+                  { label: 'Mengubah Pecahan Biasa ke Bentuk Pangkat Negatif', judul: 'Mengubah Pecahan Biasa ke Bentuk Pangkat Negatif', video: '6zU-66QtIAk' },
+                  { label: 'PENGAYAAN: Persamaan Eksponen dengan Variabel X dan Hitungan yang di Pangkat', judul: 'PENGAYAAN: Persamaan Eksponen dengan Variabel X dan Hitungan yang di Pangkat', video: 'vCrURfakYHw' },
+                  { label: 'PENGAYAAN: Hitung Volume Kubus jika Informasi Hanyalah Panjang Rusuk dalam Bentuk Pangkat', judul: 'PENGAYAAN: Hitung Volume Kubus jika Informasi Hanyalah Panjang Rusuk dalam Bentuk Pangkat', video: 'u01UAMqcY_M' },
+                  { label: 'PENGAYAAN: Kubus dengan Volume Berbentuk Akar Irasional | Panjang dan Luas Permukaan', judul: 'PENGAYAAN: Kubus dengan Volume Berbentuk Akar Irasional | Panjang dan Luas Permukaan', video: 'hjmXMtrYsxY' }
+                ]
+              },
+              {
+                id: 'smp-8-b',
+                title: 'BAB 2: Teorema Pythagoras',
+                topics: [
+                  { label: 'Teorema Pythagoras Dasar SAMPAI PAHAM', judul: 'Teorema Pythagoras Dasar SAMPAI PAHAM', video: 'OFjnCtjXgFo' },
+                  { label: 'Menentukan Panjang Sisi Segitiga yang Belum Diketahui', judul: 'Menentukan Panjang Sisi Segitiga yang Belum Diketahui', video: 'Re0B7Eg7se4' },
+                  { label: 'Cara Tahu Jenis Segitiga Hanya dari Panjang Sisinya', judul: 'Cara Tahu Jenis Segitiga Hanya dari Panjang Sisinya', video: '7Zu2VQ9LYOI' },
+                  { label: 'Tripel Pythagoras - Menentukan Triple Pythagoras atau Bukan', judul: 'Tripel Pythagoras - Menentukan Triple Pythagoras atau Bukan', video: 'gxg94A1ihts' },
+                  { label: 'Tahu Panjang Kaki Segitiga Hanya dari Hipotenusa (Sisi Terpanjang) Saja', judul: 'Tahu Panjang Kaki Segitiga Hanya dari Hipotenusa (Sisi Terpanjang) Saja', video: 'XNxgqU5Y-P0' },
+                  { label: 'Mengukur Panjang Benda APAPUN di Sekitar dengan Pythagoras', judul: 'Mengukur Panjang Benda APAPUN di Sekitar dengan Pythagoras', video: 'wlSh6-0jkI8' },
+                  { label: 'Luas dan Keliling Persegi Hanya dari Diagonal', judul: 'Luas dan Keliling Persegi Hanya dari Diagonal', video: 'YbcEMF6Tuw4' },
+                  { label: 'Segitiga Siku-Siku dengan Sudut Istimewa (60°, 45°, 30°)', judul: 'Segitiga Siku-Siku dengan Sudut Istimewa (60°, 45°, 30°)', video: 'XH97ovug2Kk' },
+                  { label: 'Diagonal Sisi dan Diagonal Ruang pada Kubus', judul: 'Diagonal Sisi dan Diagonal Ruang pada Kubus', video: 'YNI6aljfq8Q' },
+                  { label: 'Hanya dari Informasi Luas dan Satu Sisi, Bisa Tahu Panjang dan Keliling Segitiga', judul: 'Hanya dari Informasi Luas dan Satu Sisi, Bisa Tahu Panjang dan Keliling Segitiga', video: '-F3urQfTAj4' },
+                  { label: 'Menghitung Sisi Segitiga Bertumpuk', judul: 'Menghitung Sisi Segitiga Bertumpuk', video: '6_fpX1SJcV0' },
+                  { label: 'Mengukur Diagonal Persegi dari Informasi Rasio dan Luas', judul: 'Mengukur Diagonal Persegi dari Informasi Rasio dan Luas', video: '04Zvw7JppMY' },
+                  { label: 'Diagonal Ruang Persegi dari Informasi Kecil', judul: 'Diagonal Ruang Persegi dari Informasi Kecil', video: 'ZdiT3XNxKAk' }
+                ]
+              },
+              {
+                id: 'smp-8-c',
+                title: 'BAB 3: Persamaan dan Pertidaksamaan Linear Satu Variabel',
+                topics: [
+                  { label: 'Menemukan Nilai X pada Bilangan Aljabar (Pengulangan)', judul: 'Menemukan Nilai X pada Bilangan Aljabar (Pengulangan)', video: 'OleGJkSK0kg' },
+                  { label: 'Apa Itu Kalimat Terbuka dan Kalimat Benar?', judul: 'Apa Itu Kalimat Terbuka dan Kalimat Benar?', video: 'L9D2rJjTFOE' },
+                  { label: 'Persamaan Linier Satu Variabel', judul: 'Persamaan Linier Satu Variabel', video: 'qt_QpdYck4Q' },
+                  { label: 'Pertidaksamaan Linier Satu Variabel (dengan himpunan penyelesaian)', judul: 'Pertidaksamaan Linier Satu Variabel (dengan himpunan penyelesaian)', video: 'S1xSi_Uk3QU' },
+                  { label: 'Persamaan dan Pertidaksamaan Linier Satu Variabel', judul: 'Persamaan dan Pertidaksamaan Linier Satu Variabel', video: 'hq8HFNkhChc' },
+                  { label: 'Menulis Himpunan Penyelesaian dalam Pertidaksamaan', judul: 'Menulis Himpunan Penyelesaian dalam Pertidaksamaan', video: 'a5GUrFM-BdU' },
+                  { label: 'Lancar Ubah Cerita ke Bentuk Aljabar (LATIHAN)', judul: 'Lancar Ubah Cerita ke Bentuk Aljabar (LATIHAN)', video: 'NDQccCWn_o8' },
+                  { label: 'Soal Cerita Harga Barang dan Menyelesaikannya', judul: 'Soal Cerita Harga Barang dan Menyelesaikannya', video: 'zvfuxZ-a9Q4' },
+                  { label: 'Besar Sudut Segitiga yang Ada Variabel X', judul: 'Besar Sudut Segitiga yang Ada Variabel X', video: 'sPSP29m8EWc' },
+                  { label: 'Pertidaksamaan pada Segitiga', judul: 'Pertidaksamaan pada Segitiga', video: 'nma5ycp8IR8' },
+                  { label: 'Pertidaksamaan pada Persegi Panjang', judul: 'Pertidaksamaan pada Persegi Panjang', video: 'RKD-jtPbtfM' },
+                  { label: 'Menentukan Keliling Persegi Panjang dari Luasnya', judul: 'Menentukan Keliling Persegi Panjang dari Luasnya', video: 'Kcp9ViDGMfE' },
+                  { label: 'Menentukan Luas Persegi Panjang dari Kelilingnya', judul: 'Menentukan Luas Persegi Panjang dari Kelilingnya', video: 'rGNu97L88o4' },
+                  { label: 'Menentukan Nilai Minimum Agar Rata-Rata Tercapai', judul: 'Menentukan Nilai Minimum Agar Rata-Rata Tercapai', video: '5zlYEXh9NB0' },
+                  { label: 'Cari Bilangan Berurutan Ganjil dan Genap dari Jumlahnya', judul: 'Cari Bilangan Berurutan Ganjil dan Genap dari Jumlahnya', video: 'NlWu79QVzVs' },
+                  { label: 'Bilangan BULAT (Bukan Ganjil Genap) Berurutan yang Tak Diketahui dari Jumlahnya', judul: 'Bilangan BULAT (Bukan Ganjil Genap) Berurutan yang Tak Diketahui dari Jumlahnya', video: '8Dn20_vjomk' },
+                  { label: 'Mencari Umur Orang dengan Aljabar (BONUS)', judul: 'Mencari Umur Orang dengan Aljabar (BONUS)', video: 'tVYiF6abDzE' }
+                ]
+              },
+              {
+                id: 'smp-8-d',
+                title: 'BAB 4: Relasi Fungsi',
+                topics: [
+                  { label: 'PEMBUKA: Relasi dan Fungsi Dari Nol', judul: 'PEMBUKA: Relasi dan Fungsi Dari Nol', video: 'hVvwqEiGlj0' },
+                  { label: 'Domain, Kodomain dan Range', judul: 'Domain, Kodomain dan Range', video: 'LBqRG1Nb95E' },
+                  { label: 'Menggambar Diagram Panah, Kartesius dan Himpunan Pasangan Berurutan', judul: 'Menggambar Diagram Panah, Kartesius dan Himpunan Pasangan Berurutan', video: '9Dyi1mPwR3k' },
+                  { label: 'Mengetahui Relasi itu Fungsi atau Bukan Fungsi', judul: 'Mengetahui Relasi itu Fungsi atau Bukan Fungsi', video: '2WdVexDPz4o' },
+                  { label: 'Notasi dan Rumus Fungsi', judul: 'Notasi dan Rumus Fungsi', video: 'vXO1fgqZlLc' },
+                  { label: 'Fungsi dengan Domain Pertidaksamaan', judul: 'Fungsi dengan Domain Pertidaksamaan', video: 'nj8sBU8OoK8' },
+                  { label: 'Menghitung Fungsi dan Membuat Diagram', judul: 'Menghitung Fungsi dan Membuat Diagram', video: 'cONY5wDp94w' },
+                  { label: 'Peta dan Prapeta Fungsi', judul: 'Peta dan Prapeta Fungsi', video: 'niw9Lq_Mhlg' },
+                  { label: 'Menentukan Maksimal Fungsi yang Bisa Dibentuk pada suatu Relasi', judul: 'Menentukan Maksimal Fungsi yang Bisa Dibentuk pada suatu Relasi', video: 'KTSehvKkKds' },
+                  { label: 'Menentukan Banyak Korespondensi Satu-Satu yang Bisa Dibuat', judul: 'Menentukan Banyak Korespondensi Satu-Satu yang Bisa Dibuat', video: 'Tix9hH-bjG8' },
+                  { label: 'Menentukan Rumus Fungsi dan Nilai Fungsinya - FOKUS DUA VARIABEL', judul: 'Menentukan Rumus Fungsi dan Nilai Fungsinya - FOKUS DUA VARIABEL', video: 'Q-H0pR4wcMU' }
+                ]
+              },
+              {
+                id: 'smp-8-e',
+                title: 'BAB 5: Persamaan Garis Lurus',
+                topics: [
+                  { label: 'Wajib: Cara Membaca Diagram Kartesius', judul: 'Wajib: Cara Membaca Diagram Kartesius', video: 'M4Lk2uh3fn4' },
+                  { label: 'PGL Part 1: Gambaran Umum Persamaan Garis Lurus', judul: 'PGL Part 1: Gambaran Umum Persamaan Garis Lurus', video: 'clMtO8e0Cvo' },
+                  { label: 'PGL Part 2: Gradien atau Kemiringan', judul: 'PGL Part 2: Gradien atau Kemiringan', video: 'bZH-BEkHMBU' },
+                  { label: 'PGL Part 3: Menentukan Persamaan Garis', judul: 'PGL Part 3: Menentukan Persamaan Garis', video: 'lEEwv60mFPg' },
+                  { label: 'Cara Cepat Menggambar Grafik Sesuai Persamaan Garis', judul: 'Cara Cepat Menggambar Grafik Sesuai Persamaan Garis', video: '2V36FffksSg' },
+                  { label: 'PGL Part 4: Titik Potong Dua Garis', judul: 'PGL Part 4: Titik Potong Dua Garis', video: 'ZWbBQLbJ6GU' },
+                  { label: 'PGL Part 5: Menerapkan Persamaan Garis di Kehidupan', judul: 'PGL Part 5: Menerapkan Persamaan Garis di Kehidupan', video: 'h9FULtJviik' },
+                  { label: 'Titik Berpotongan Sumbu-X dan Sumbu-Y', judul: 'Titik Berpotongan Sumbu-X dan Sumbu-Y', video: 'yzaso-xnygY' },
+                  { label: 'PGL Part FINAL: Soal dan Pembahasan (Soal Beragam)', judul: 'PGL Part FINAL: Soal dan Pembahasan (Soal Beragam)', video: 'gFLn6O8VXWQ' }
+                ]
+              },
+              {
+                id: 'smp-8-f',
+                title: 'BAB 6: Statisika',
+                topics: [
+                  { label: 'Statistika Dasar: Mean, Median, Modus', judul: 'Statistika Dasar: Mean, Median, Modus', video: 'KLpHfpOFYoc' }
+                ]
+              },
+              {
+                id: 'smp-8-7',
+                title: '⚛️ Ilmu Alat BERGUNA (Bonus)',
+                topics: [
+                  { label: 'Cara Tahu Nilai Akar dengan Pohon Faktor', judul: 'Cara Tahu Nilai Akar dengan Pohon Faktor', video: 'Ith93sMY_FI' },
+                  { label: 'Mengetahui Nilai Huruf (Variabel Tidak Diketahui) dengan Aljabar Dasar', judul: 'Mengetahui Nilai Huruf (Variabel Tidak Diketahui) dengan Aljabar Dasar', video: 'OleGJkSK0kg' },
+                  { label: 'Cara Membaca Diagram Kartesius', judul: 'Cara Membaca Diagram Kartesius', video: 'M4Lk2uh3fn4' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'smp-9',
+            label: 'Kelas 9',
+            chapters: [
+              {
+                id: 'smp-9-a',
+                title: 'BAB 1: Sistem Persamaan Linear Dua Variabel',
+                topics: [
+                  { label: 'SPLDV Metode Eliminasi', judul: 'SPLDV Metode Eliminasi', video: 'EoXRybRtvtY' },
+                  { label: 'SPLDV Metode Substitusi', judul: 'SPLDV Metode Substitusi', video: 'cfpElkWBxcw' },
+                  { label: 'SPLDV Metode Grafik', judul: 'SPLDV Metode Grafik', video: 'i9d5XO81wBI' },
+                  { label: 'SPLDV Metode Campuran', judul: 'SPLDV Metode Campuran', video: '4DTwXnPZEZE' },
+                  { label: 'Bonus: Mencari Umur Menggunakan Aljabar', judul: 'Bonus: Mencari Umur Menggunakan Aljabar', video: 'tVYiF6abDzE' }
+                ]
+              },
+              {
+                id: 'smp-9-b',
+                title: 'BAB 2: Bangun Ruang',
+                topics: [
+                  { label: 'Teorema Pythagoras Dasar SAMPAI PAHAM', judul: 'Teorema Pythagoras Dasar SAMPAI PAHAM', video: 'OFjnCtjXgFo' },
+                  { label: 'Hitung Keliling Bangun Datar Dasar LENGKAP (Memperkuat Pemahaman)', judul: 'Hitung Keliling Bangun Datar Dasar LENGKAP (Memperkuat Pemahaman)', video: 'Y-H9l_6aY6o' },
+                  { label: 'Luas Bangun Datar LENGKAP: Segitiga, Persegi, Trapesium, Jajar Genjang, Belah Ketupat, dll', judul: 'Luas Bangun Datar LENGKAP: Segitiga, Persegi, Trapesium, Jajar Genjang, Belah Ketupat, dll', video: 'dVI1egSlUvc' },
+                  { label: 'Keliling Setengah Lingkaran', judul: 'Keliling Setengah Lingkaran', video: 'A7dq8IN13go' },
+                  { label: 'Kubus dan Balok: Volume dan Luas Permukaan', judul: 'Kubus dan Balok: Volume dan Luas Permukaan', video: 'hlOKjVmBdNA' },
+                  { label: 'Prisma Segitiga: Volume dan Luas Permukaan', judul: 'Prisma Segitiga: Volume dan Luas Permukaan', video: 'OyUNcv7tX5M' },
+                  { label: 'Limas Segi Empat: Volume dan Luas Permukaan', judul: 'Limas Segi Empat: Volume dan Luas Permukaan', video: 'YgyGiyEaBdQ' },
+                  { label: 'Limas Segitiga: Luas Permukaan', judul: 'Limas Segitiga: Luas Permukaan', video: 'LI7PN9izutE' },
+                  { label: 'Limas Segitiga: Volume', judul: 'Limas Segitiga: Volume', video: 'NlOLrSAc9m8' },
+                  { label: 'Tabung, Bola, Kerucut LENGKAP (Volume dan Luas Permukaan)', judul: 'Tabung, Bola, Kerucut LENGKAP (Volume dan Luas Permukaan)', video: 'XrdlZ2mBaoM' },
+                  { label: 'Menghitung Kapasitas Suatu Wadah dalam Liter', judul: 'Menghitung Kapasitas Suatu Wadah dalam Liter', video: 'apKcS41yc1s' }
+                ]
+              },
+              {
+                id: 'smp-9-c',
+                title: 'BAB 3: Transformasi Geometri',
+                topics: [
+                  { label: 'Kesebangunan dan Kekongruenan', judul: 'Kesebangunan dan Kekongruenan', video: 'g1BmqWJ6WuI' }
+                ]
+              },
+              {
+                id: 'smp-9-d',
+                title: 'BAB 4: Peluang dan Pemilihan Sampel',
+                topics: [
+                  { label: 'Pengenalan Konsep Dasar Peluang', judul: 'Pengenalan Konsep Dasar Peluang', video: 'fLPPgAINtzw' },
+                  { label: 'Jenis-Jenis Peluang Kejadian Majemuk - Garis Besar', judul: 'Jenis-Jenis Peluang Kejadian Majemuk - Garis Besar', video: '-anMsu5zEBI' },
+                  { label: 'Peluang Kejadian Saling Lepas', judul: 'Peluang Kejadian Saling Lepas', video: 's_WF3W11i6E' },
+                  { label: 'Peluang Kejadian Tidak Saling Lepas', judul: 'Peluang Kejadian Tidak Saling Lepas', video: 'aorM_yIBFQw' },
+                  { label: 'Peluang Saling Bebas dan Tidak Saling Bebas', judul: 'Peluang Saling Bebas dan Tidak Saling Bebas', video: 'i7dpgm6iEc0' },
+                  { label: 'Peluang Kejadian Bersyarat', judul: 'Peluang Kejadian Bersyarat', video: '-76Y-cPlASk' }
+                ]
+              },
+              {
+                id: 'smp-9-5',
+                title: '🛠️ Ilmu Alat agar Tidak Bengong',
+                topics: [
+                  { label: 'Operasi Hitung Campuran (+-x:)', judul: 'Operasi Hitung Campuran (+-x:)', video: '-gYF_sePm1w' },
+                  { label: 'Teorema Pythagoras', judul: 'Teorema Pythagoras', video: 'OFjnCtjXgFo' },
+                  { label: 'Aljabar Bayi: Suku, Koefisien, Variabel, Konstanta', judul: 'Aljabar Bayi: Suku, Koefisien, Variabel, Konstanta', video: 'Hbfqcr2Yayo' },
+                  { label: 'Menyederhanakan Aljabar', judul: 'Menyederhanakan Aljabar', video: 'TUE5ymUV8T8' },
+                  { label: 'Aljabar Dasar: Mencari Nilai X pada Suatu Persamaan', judul: 'Aljabar Dasar: Mencari Nilai X pada Suatu Persamaan', video: '_ZrG8b_Wrwg' },
+                  { label: 'Pertidaksamaan Linear Satu Variabel', judul: 'Pertidaksamaan Linear Satu Variabel', video: 'S1xSi_Uk3QU' },
+                  { label: 'Sistem Persamaan Linear Dua Variabel Metode Eliminasi', judul: 'Sistem Persamaan Linear Dua Variabel Metode Eliminasi', video: 'EoXRybRtvtY' },
+                  { label: 'Alternatif Mudah Menguasai Akar', judul: 'Alternatif Mudah Menguasai Akar', video: 'Ith93sMY_FI' },
+                  { label: 'Bentuk Umum Persamaan Kuadrat - ax² + bx + c = 0', judul: 'Bentuk Umum Persamaan Kuadrat - ax² + bx + c = 0', video: 'Mp5ynPZRy5o' }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      sma: {
+        label: 'SMA',
+        classes: [
+          {
+            id: 'sma-10',
+            label: 'Kelas 10',
+            chapters: [
+              {
+                id: 'sma-10-a',
+                title: 'Masih dalam Proses Penyusunan',
+                topics: [
+                  { label: 'Coming Soon', judul: 'TEMPAT JUDUL X', video: 'lIwAcWMV-a8' },
+                  { label: 'Coming Soon', judul: 'TEMPAT JUDUL Y', video: 'lIwAcWMV-a8' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'sma-11',
+            label: 'Kelas 11',
+            chapters: [
+              {
+                id: 'sma-11-a',
+                title: 'Masih dalam Proses Penyusunan',
+                topics: [
+                  { label: 'Coming Soon', judul: 'TEMPAT JUDUL Z', video: 'lIwAcWMV-a8' },
+                  { label: 'Coming Soon', judul: 'TEMPAT JUDUL A1', video: 'lIwAcWMV-a8' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'sma-12',
+            label: 'Kelas 12',
+            chapters: [
+              {
+                id: 'sma-12-a',
+                title: 'Masih dalam Proses Penyusunan',
+                topics: [
+                  { label: 'Coming Soon', judul: 'TEMPAT JUDUL Z', video: 'lIwAcWMV-a8' },
+                  { label: 'Coming Soon', judul: 'TEMPAT JUDUL A1', video: 'lIwAcWMV-a8' }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    };
+
+    const UMUM_DATA = {
+      aritmatika: {
+        title: 'Aritmatika',
+        topics: [
+          { label: 'Penjumlahan untuk Bayi', judul: 'Penjumlahan untuk Bayi', video: 'pcTLVf2UjWI' },
+          { label: 'Pengurangan untuk Bayi', judul: 'Pengurangan untuk Bayi', video: 'ODD_33h9owk' },
+          { label: 'Penjumlahan Berususun (di Atas 2 Digit)', judul: 'Penjumlahan Berususun (di Atas 2 Digit)', video: 'dgG0U6Lj7nY' },
+          { label: 'Pengurangan Bersusun (di Atas 2 Digit)', judul: 'Pengurangan Bersusun (di Atas 2 Digit)', video: 'k9j2vlyhWss' },
+          { label: 'Perkalian Berususun', judul: 'Perkalian Berususun', video: 'ffg4BsACGwk' },
+          { label: 'Pembagian Bersusun - Metode Porogapit', judul: 'Pembagian Bersusun - Metode Porogapit', video: 'zXyxIgmrflc' },
+          { label: 'Cara Operasi Hitung Bilangan Campuran (Tambah Kurang Kali Bagi Kurung)', judul: 'Cara Operasi Hitung Bilangan Campuran (Tambah Kurang Kali Bagi Kurung)', video: '-bxMX8SY9-U' },
+          { label: 'Mencari KPK dan FPB dengan Pohon Faktor', judul: 'Mencari KPK dan FPB dengan Pohon Faktor', video: 'mW8EjuJogMs' },
+          { label: 'Mencari KPK dan FPB Tanpa Pohon Faktor', judul: 'Mencari KPK dan FPB Tanpa Pohon Faktor', video: '-CN5eLaOuwE' },
+          { label: 'Jumlahkan dan Kurangi Waktu', judul: 'Jumlahkan dan Kurangi Waktu', video: 'tcInpmoQ2M0' },
+          { label: 'Konversi Satuan Waktu (Jam, Menit, Detik)', judul: 'Konversi Satuan Waktu (Jam, Menit, Detik)', video: 'MkTVFNGNKPI' },
+          { label: 'Belajar Pecahan DARI NOL SAMPAI PAHAM', judul: 'Belajar Pecahan DARI NOL SAMPAI PAHAM', video: 'brTw7W45flo' },
+          { label: 'Cara Ubah Pecahan Tidak Wajar jadi Campuran (Metode Akurat)', judul: 'Cara Ubah Pecahan Tidak Wajar jadi Campuran (Metode Akurat)', video: 'qtuUQ9n6BdU' },
+          { label: 'Cara Ubah Pecahan Tidak Wajar jadi Campuran (Metode CEPAT)', judul: 'Cara Ubah Pecahan Tidak Wajar jadi Campuran (Metode CEPAT)', video: 'UkaEwW8_hK0' },
+          { label: 'Trik Coret Pecahan - Cara Cepat', judul: 'Trik Coret Pecahan - Cara Cepat', video: 'qD2TD9UZUg8' },
+          { label: 'Membagi Pecahan dengan Bilangan Bulat', judul: 'Membagi Pecahan dengan Bilangan Bulat', video: 'DgMhIoNFzWY' },
+          { label: 'Membandingkan Lebih Besar/Lebih Kecil Pecahan dengan Penyebut Berbeda', judul: 'Membandingkan Lebih Besar/Lebih Kecil Pecahan dengan Penyebut Berbeda', video: 'mZP6ekRXKBc' },
+          { label: 'Menghitung Pecahan di dalam Pecahan', judul: 'Menghitung Pecahan di dalam Pecahan', video: 'MVU8ENF_48k' },
+          { label: 'Mengurutkan Pecahan dari Terbesar ke Terkecil', judul: 'Mengurutkan Pecahan dari Terbesar ke Terkecil', video: 'ehqmFZGTIF4' },
+          { label: 'Operasi Hitung Campuran Bilangan Pecahan', judul: 'Operasi Hitung Campuran Bilangan Pecahan', video: 'VAfA5RQOe84' },
+          { label: 'Mengubah Pecahan Menjadi Desimal', judul: 'Mengubah Pecahan Menjadi Desimal', video: 'sMwmIamGuZo' },
+          { label: 'Cara Hitung Desimal (+-x:)', judul: 'Cara Hitung Desimal (+-x:)', video: 'dKlsRrS_k30' },
+          { label: 'Perkalian Desimal', judul: 'Perkalian Desimal', video: 'T9VsxjEcNsg' },
+          { label: 'Pembagian Desimal', judul: 'Pembagian Desimal', video: 'SLcfXV2pjHo' },
+          { label: 'Mengubah Desimal Menjadi Pecahan Biasa', judul: 'Mengubah Desimal Menjadi Pecahan Biasa', video: 'vP5g2h0P66g' },
+          { label: 'Mengubah Pecahan Menjadi Persen', judul: 'Mengubah Pecahan Menjadi Persen', video: 'u9Dq7dbDaIE' },
+          { label: 'Pengenalan Rasio dengan Cara Paling Sederhana', judul: 'Pengenalan Rasio dengan Cara Paling Sederhana', video: '8nhxC6chtlU' },
+          { label: 'Rasio Senilai dan Berbalik Nilai', judul: 'Rasio Senilai dan Berbalik Nilai', video: 'ADVrOV1j3Ng' },
+          { label: 'Rasio pada Durasi Waktu', judul: 'Rasio pada Durasi Waktu', video: 'qtZiTJDm9hw' },
+          { label: 'Rasio dengan Konversi Panjang dan Berat', judul: 'Rasio dengan Konversi Panjang dan Berat', video: 'loarXAzJFzA' },
+          { label: 'Rasio dan Kecepatan', judul: 'Rasio dan Kecepatan', video: '485EpPCPsH8' },
+          { label: 'Membaca Skala pada Peta', judul: 'Membaca Skala pada Peta', video: 'LuU3oOKFvWE' },
+          { label: 'Sifat dan Operasi Aljabar (Bisa untuk Metode Hitung Cepat)', judul: 'Sifat dan Operasi Aljabar (Bisa untuk Metode Hitung Cepat)', video: 'z0yUMHj-1_o' },
+          { label: 'Cara Hitung Diskon di Berbagai Keadaan', judul: 'Cara Hitung Diskon di Berbagai Keadaan', video: 'elZzGGa9LDQ' },
+          { label: 'Menentukan Modal Awal dari Persen dan Keuntungan', judul: 'Menentukan Modal Awal dari Persen dan Keuntungan', video: 'M2cCZcLnb_c' },
+          { label: 'Cara Hitung Harga Asli dari Produk yang Diskon', judul: 'Cara Hitung Harga Asli dari Produk yang Diskon', video: 'Fve1IsaOYyw' },
+          { label: 'Menemukan Nilai X pada Berbagai Bilangan Sederhana', judul: 'Menemukan Nilai X pada Berbagai Bilangan Sederhana', video: 'OleGJkSK0kg' },
+          { label: 'X adalah berapa % dari Y?', judul: 'X adalah berapa % dari Y?', video: 'KzinvP9ibj8' },
+          { label: 'X% dari Y=....', judul: 'X% dari Y=....', video: 'Xst8RBe_Y-s' },
+          { label: 'Mengetahui Jumlah Angka dari Suatu Persen', judul: 'Mengetahui Jumlah Angka dari Suatu Persen', video: 'bfHwnXXolAk' },
+          { label: 'Menentukan Berapa Persen yang Bertambah dari Angka Awal', judul: 'Menentukan Berapa Persen yang Bertambah dari Angka Awal', video: '3vkdJvoDB8A' },
+          { label: 'Ubah Satuan Berat', judul: 'Ubah Satuan Berat', video: 'Q-4kgjKCvqo' },
+          { label: 'Apa itu Sebenarnya Bilangan Rasional?', judul: 'Apa itu bilangan Rasional?', video: 'pfjsRbsTjNg' },
+          { label: 'Eksponen Dasar dari NOL SAMPAI PAHAM', judul: 'Eksponen Dasar dari NOL SAMPAI PAHAM', video: 'GArRir0rzNU' },
+          { label: 'Mengubah cm kubik ke m kubik', judul: 'Mengubah cm kubik ke m kubik', video: 'vFA2lQFViaU' },
+          { label: 'Menyederhanakan Akar Kuadrat (Pangkat Dua)', judul: 'Menyederhanakan Akar Kuadrat (Pangkat Dua)', video: 'GlWoW3ya55U' },
+          { label: 'Menyederhanakan Akar Kubik (Pangkat Tiga)', judul: 'Menyederhanakan Akar Kubik (Pangkat Tiga)', video: 'IfttjX1nmzU' },
+          { label: 'MUDAH Menguasai Akar dengan Pohon Faktor', judul: 'MUDAH Menguasai Akar dengan Pohon Faktor', video: 'kCVA2K_TBv8' },
+          { label: 'Bilangan Berpangkat Minus', judul: 'Bilangan Berpangkat Minus', video: 'lq9ioCh4p2Q' },
+          { label: 'Penjumlahan dan Pengurangan Bilangan Akar', judul: 'Penjumlahan dan Pengurangan Bilangan Akar', video: 'pQiIl2NYXSc' },
+          { label: 'Menyederhanakan Pecahan dalam Akar', judul: 'Menyederhanakan Pecahan dalam Akar', video: 'L_zT1cnn2WU' },
+          { label: 'Mengeluarkan Akar pada Bilangan Pecahan', judul: 'Mengeluarkan Akar pada Bilangan Pecahan', video: 'zUO7n-YmOCw' },
+          { label: 'Mengubah Bilangan Berpangkat Pecahan ke Akar Maupun Sebaliknya', judul: 'Mengubah Bilangan Berpangkat Pecahan ke Akar Maupun Sebaliknya', video: 'B2fHF5dlZN4' },
+          { label: 'Jika dalam Suatu Baris Akar Banyak Bilangan dan Variabel Berbeda', judul: 'Jika dalam Suatu Baris Akar Banyak Bilangan dan Variabel Berbeda', video: 'eeJ04wnD63w' },
+          { label: 'Mencari Nilai Pangkat dari Pecahan dalam Bentuk Akar', judul: 'Mencari Nilai Pangkat dari Pecahan dalam Bentuk Akar', video: 'liaHJvI5XAM' },
+          { label: 'Mengubah Bentuk Akar ke Bilangan Berpangkat', judul: 'Mengubah Bentuk Akar ke Bilangan Berpangkat', video: '_PRoZqD7TnQ' },
+          { label: 'Sifat Dasar Penjumlahan dan Pengurangan Bilangan Berpangkat', judul: 'Sifat Dasar Penjumlahan dan Pengurangan Bilangan Berpangkat', video: 'V6EJoolFhKg' }
+        ]
+      },
+
+      aljabar: {
+        title: 'Aljabar',
+        topics: [
+          { label: 'Aljabar Bayi: Menentukan Suku, Variabel, Koefisien, Konstanta', judul: 'Aljabar Bayi: Menentukan Suku, Variabel, Koefisien, Konstanta', video: 'Hbfqcr2Yayo' },
+          { label: 'Penjumlahan dan Pengurangan Aljabar Dasar', judul: 'Penjumlahan dan Pengurangan Aljabar Dasar', video: '-u8yZIrDJ2w' },
+          { label: 'Perkalian Aljabar Dasar', judul: 'Perkalian Aljabar Dasar', video: 'zJShu9rR4QA' },
+          { label: 'Pembagian Aljabar Dasar', judul: 'Pembagian Aljabar Dasar', video: 'GDXCVnhxrdc' },
+          { label: 'Sifat dan Operasi Aljabar: Distributif, Komutatif, Asosiatif', judul: 'Sifat dan Operasi Aljabar: Distributif, Komutatif, Asosiatif', video: 'z0yUMHj-1_o' },
+          { label: 'Menyederhanakan Persamaan Aljabar', judul: 'Menyederhanakan Persamaan Aljabar', video: 'TUE5ymUV8T8' },
+          { label: 'Menemukan Nilai X pada Berbagai Persamaan Sederhana', judul: 'Menemukan Nilai X pada Berbagai Persamaan Sederhana', video: 'OleGJkSK0kg' },
+          { label: 'Mencari Nilai X pada Sudut Berpelurus dan Bersuplemen', judul: 'Mencari Nilai X pada Sudut Berpelurus dan Bersuplemen', video: 'H39hr0vZjNo' },
+          { label: 'Sistem Persamaan Linear Satu Variabel (SPLSV)', judul: 'Sistem Persamaan Linear Satu Variabel (SPLSV)', video: 'qt_QpdYck4Q' },
+          { label: 'Pertidaksamaan Linear Satu Variabel', judul: 'Pertidaksamaan Linear Satu Variabel', video: 'S1xSi_Uk3QU' },
+          { label: 'Menulis Himpunan Penyelesaian dalam Pertidaksamaan', judul: 'Menulis Himpunan Penyelesaian dalam Pertidaksamaan', video: 'a5GUrFM-BdU' },
+          { label: 'Persamaan dan Pertidaksamaan Linear Satu Variabel', judul: 'Persamaan dan Pertidaksamaan Linear Satu Variabel', video: 'hq8HFNkhChc' },
+          { label: 'Cara Hitung Perkalian Aljabar Suku Dua (Binomial)', judul: 'Cara Hitung Perkalian Aljabar Suku Dua (Binomial)', video: 'HtzmMEPfpKQ' },
+          { label: 'Cara Temukan Nilai Variabel X dalam Kumpulan Pecahan', judul: 'Cara Temukan Nilai Variabel X dalam Kumpulan Pecahan', video: '_ZrG8b_Wrwg' },
+          { label: 'Sifat dan Operasi Aljabar: Distributif, Komutatif, Asosiatif', judul: 'Sifat dan Operasi Aljabar: Distributif, Komutatif, Asosiatif', video: 'z0yUMHj-1_o' },
+          { label: 'Lancar Ubah Cerita ke Bentuk Aljabar (LATIHAN)', judul: 'Lancar Ubah Cerita ke Bentuk Aljabar (LATIHAN)', video: 'NDQccCWn_o8' },
+          { label: 'Soal Cerita Harga Barang dan Menyelesaikannya', judul: 'Soal Cerita Harga Barang dan Menyelesaikannya', video: 'zvfuxZ-a9Q4' },
+          { label: 'Besar Sudut Segitiga yang Ada Variabel X', judul: 'Besar Sudut Segitiga yang Ada Variabel X', video: 'sPSP29m8EWc' },
+          { label: 'Pertidaksamaan pada Segitiga', judul: 'Pertidaksamaan pada Segitiga', video: 'nma5ycp8IR8' },
+          { label: 'Pertidaksamaan pada Persegi Panjang', judul: 'Pertidaksamaan pada Persegi Panjang', video: 'RKD-jtPbtfM' },
+          { label: 'Menentukan Keliling Persegi Panjang dari Luasnya', judul: 'Menentukan Keliling Persegi Panjang dari Luasnya', video: 'Kcp9ViDGMfE' },
+          { label: 'Menentukan Luas Persegi Panjang dari Kelilingnya', judul: 'Menentukan Luas Persegi Panjang dari Kelilingnya', video: 'rGNu97L88o4' },
+          { label: 'Menentukan Nilai Minimum Agar Rata-Rata Tercapai', judul: 'Menentukan Nilai Minimum Agar Rata-Rata Tercapai', video: '5zlYEXh9NB0' },
+          { label: 'Faktorisasi Aljabar MUDAH dengan Metode FPB', judul: 'Faktorisasi Aljabar MUDAH dengan Metode FPB', video: '58NbLtucjuE' },
+          { label: 'Bilangan Berurutan Ganjil dan Genap dari Jumlahnya', judul: 'Bilangan Berurutan Ganjil dan Genap dari Jumlahnya', video: 'NlWu79QVzVs' },
+          { label: 'Bilangan BULAT (Bukan Ganjil Genap) Berurutan yang Tak Diketahui dari Jumlahnya', judul: 'Bilangan BULAT (Bukan Ganjil Genap) Berurutan yang Tak Diketahui dari Jumlahnya', video: '8Dn20_vjomk' },
+          { label: 'Sistem Persamaan Linear Dua Variabel (SPLDV) - Metode Eliminasi', judul: 'Sistem Persamaan Linear Dua Variabel (SPLDV) - Metode Eliminasi', video: 'EoXRybRtvtY' },
+          { label: 'SPLDV - Metode Substitusi', judul: 'SPLDV - Metode Substitusi', video: 'cfpElkWBxcw' },
+          { label: 'SPLDV - Metode Campuran', judul: 'SPLDV - Metode Campuran', video: '4DTwXnPZEZE' },
+          { label: 'SPLDV - Metode Grafik', judul: 'SPLDV - Metode Grafik', video: 'i9d5XO81wBI' },
+          { label: 'Jadi Tahu Umur Orang dengan Aljabar', judul: 'Jadi Tahu Umur Orang dengan Aljabar', video: 'tVYiF6abDzE' },
+          { label: 'Persamaan Eksponen dengan Variabel X dan Hitungan yang di Pangkat', judul: 'Persamaan Eksponen dengan Variabel X dan Hitungan yang di Pangkat', video: 'vCrURfakYHw' },
+          { label: 'Persamaan Kuadrat PART 1: Fungsi Kuadrat - Mencari ABC Bentuk Umum (ax² + bx + c = 0)', judul: 'Persamaan Kuadrat PART 1: Fungsi Kuadrat - Mencari ABC Bentuk Umum (ax² + bx + c = 0)', video: 'Mp5ynPZRy5o' },
+          { label: 'Persamaan Kuadrat PART 2: Menentukan Akar Persamaan Kuadrat dengan Pemfaktoran', judul: 'Persamaan Kuadrat PART 2: Menentukan Akar Persamaan Kuadrat dengan Pemfaktoran', video: 'U59S0_aOU6g' },
+          { label: 'Cara Cepat Memfaktorkan Aljabar Banyak Suku (Polinomial)', judul: 'Cara Cepat Memfaktorkan Aljabar Banyak Suku (Polinomial)', video: '7GhtXLZdLUE' },
+          { label: 'Persamaan Kuadrat PART 3: Mencari Akar Persamaan Kuadrat dengan Melengkapkan Kuadrat Sempurna', judul: 'Persamaan Kuadrat PART 3: Mencari Akar Persamaan Kuadrat dengan Melengkapkan Kuadrat Sempurna', video: 'pvJfAgfIWUc' },
+          { label: 'Persamaan Kuadrat PART 4: Rumus ABC untuk Menentukan Akar Persamaan Kuadrat', judul: 'Persamaan Kuadrat PART 4: Rumus ABC untuk Menentukan Akar Persamaan Kuadrat', video: 'uS20kSYdb4U' },
+          { label: 'Faktoriasi Aljabar (TINGKAT LEBIH TINGGI) SAMPAI PAHAM', judul: 'Faktoriasi Aljabar (TINGKAT LEBIH TINGGI) SAMPAI PAHAM', video: 'SR_UjrfeXk4' },
+          { label: 'Sistem Persamaan Linear Tiga Variabel (SPLTV)', judul: 'Sistem Persamaan Linear Tiga Variabel (SPLTV)', video: 'f4a_-bbGPls' },
+          { label: 'SPLTV - Mencari X,Y,Z Lalu Menjumlahkannya', judul: 'SPLTV - Mencari X,Y,Z Lalu Menjumlahkannya', video: '2QV6BHfZapU' },
+          { label: 'Menentukan Umur Orang dengan Persamaan Aljabar', judul: 'Menentukan Umur Orang dengan Persamaan Aljabar', video: 'tVYiF6abDzE' },
+          { label: 'Sistem Persamaan Linear Empat Variabel (SPLEV)', judul: 'Sistem Persamaan Linear Empat Variabel (SPLEV)', video: 'tsa4Z037go0' }
+        ]
+      },
+
+      geometri: {
+        title: 'Geometri',
+        topics: [
+          { label: 'Hubungan Antarsudut: Berpenyiku', judul: 'Hubungan Antarsudut: Berpenyiku', video: 'naveUvI9W_k' },
+          { label: 'Hubungan Antarsudut: Berpelurus', judul: 'Hubungan Antarsudut: Berpelurus', video: 'DipiOEWL7u4' },
+          { label: 'Perbedaan Sudut Bersuplemen dan Berpelurus', judul: 'Perbedaan Sudut Bersuplemen dan Berpelurus', video: 'tVjPyW5HOLE' },
+          { label: 'Mencari Nilai X pada Sudut Berpelurus dan Bersuplemen', judul: 'Mencari Nilai X pada Sudut Berpelurus dan Bersuplemen', video: 'H39hr0vZjNo' },
+          { label: 'Hubungan Antarsudut: Bertolak Belakang', judul: 'Hubungan Antarsudut: Bertolak Belakang', video: 'GYuRRPr18hk' },
+          { label: 'Hubungan Antarsudut: Dua Garis Sejajar - Sudut Sehadap, Berseberangan, Sepihak', judul: 'Hubungan Antarsudut: Dua Garis Sejajar - Sudut Sehadap, Berseberangan, Sepihak', video: 'sPKL4EB5prU' },
+          { label: 'Menghitung Besar Sudut dari Informasi Kecil pada Dua Garis Sejajar Dipotong', judul: 'Menghitung Besar Sudut dari Informasi Kecil pada Dua Garis Sejajar Dipotong', video: '62lmvFy7Khk' },
+          { label: 'Kesebangunan Dasar: Menentukan Besar Sisi dari Bangun Lainnya', judul: 'Kesebangunan Dasar: Menentukan Besar Sisi dari Bangun Lainnya', video: 'cpmTQXb3zcQ' },
+          { label: 'Kesebangunan pada Segitiga: Cara Menentukan Panjang Sisi Segitiga Lainnya', judul: 'Kesebangunan pada Segitiga: Cara Menentukan Panjang Sisi Segitiga Lainnya', video: 'YZQ0GAfQJLo' },
+          { label: 'Menentukan Tinggi Benda dari Bayangannya', judul: 'Menentukan Tinggi Benda dari Bayangannya', video: 'LnArvqewnAE' },
+          { label: 'Menentukan Skala dari Dua Hal Sebangun', judul: 'Menentukan Skala dari Dua Hal Sebangun', video: 'j5hSOFLePGM' },
+          { label: 'Teorema Pythagoras: Mengetahui Panjang Sisi Segitiga Tak Diketahui', judul: 'Teorema Pythagoras: Mengetahui Panjang Sisi Segitiga Tak Diketahui', video: 'OFjnCtjXgFo' },
+          { label: 'Menentukan Panjang Sisi Segitiga yang Belum Diketahui', judul: 'Menentukan Panjang Sisi Segitiga yang Belum Diketahui', video: 'Re0B7Eg7se4' },
+          { label: 'Cara Tahu Jenis Segitiga Hanya dari Panjang Sisinya', judul: 'Cara Tahu Jenis Segitiga Hanya dari Panjang Sisinya', video: '7Zu2VQ9LYOI' },
+          { label: 'Tripel Pythagoras - Menentukan Triple Pythagoras atau Bukan', judul: 'Tripel Pythagoras - Menentukan Triple Pythagoras atau Bukan', video: 'gxg94A1ihts' },
+          { label: 'Tahu Panjang Kaki Segitiga Hanya dari Hipotenusa Saja', judul: 'Tahu Panjang Kaki Segitiga Hanya dari Hipotenusa Saja', video: 'XNxgqU5Y-P0' },
+          { label: 'Mengukur Panjang Benda APAPUN di Sekitar dengan Pythagoras', judul: 'Mengukur Panjang Benda APAPUN di Sekitar dengan Pythagoras', video: 'wlSh6-0jkI8' },
+          { label: 'Luas dan Keliling Persegi Hanya dari Diagonal', judul: 'Luas dan Keliling Persegi Hanya dari Diagonal', video: 'YbcEMF6Tuw4' },
+          { label: 'Segitiga Siku-Siku dengan Sudut Istimewa (60°, 45°, 30°)', judul: 'Segitiga Siku-Siku dengan Sudut Istimewa (60°, 45°, 30°)', video: 'XH97ovug2Kk' },
+          { label: 'Diagonal Sisi dan Diagonal Ruang pada Kubus', judul: 'Diagonal Sisi dan Diagonal Ruang pada Kubus', video: 'YNI6aljfq8Q' },
+          { label: 'Hanya dari Informasi Luas dan Satu Sisi, Bisa Tahu Panjang dan Keliling Segitiga', judul: 'Hanya dari Informasi Luas dan Satu Sisi, Bisa Tahu Panjang dan Keliling Segitiga', video: '-F3urQfTAj4' },
+          { label: 'Menghitung Sisi Segitiga Bertumpuk', judul: 'Menghitung Sisi Segitiga Bertumpuk', video: '6_fpX1SJcV0' },
+          { label: 'Mengukur Diagonal Persegi dari Informasi Rasio dan Luas', judul: 'Mengukur Diagonal Persegi dari Informasi Rasio dan Luas', video: '04Zvw7JppMY' },
+          { label: 'Diagonal Ruang Persegi dari Informasi Kecil', judul: 'Diagonal Ruang Persegi dari Informasi Kecil', video: 'ZdiT3XNxKAk' },
+          { label: 'Cara Hitung Besar Sudut Segitiga Tidak Diketahui', judul: 'Cara Hitung Besar Sudut Segitiga Tidak Diketahui', video: 'nvcGagDCkqs' },
+          { label: 'Besar Sudut Segitiga yang Ada Variabel X', judul: 'Besar Sudut Segitiga yang Ada Variabel X', video: 'sPSP29m8EWc' },
+          { label: 'Pertidaksamaan pada Segitiga', judul: 'Pertidaksamaan pada Segitiga', video: 'nma5ycp8IR8' },
+          { label: 'Pertidaksamaan pada Persegi Panjang', judul: 'Pertidaksamaan pada Persegi Panjang', video: 'RKD-jtPbtfM' },
+          { label: 'Luas Bangun Datar: Segitiga, Persegi, Trapesium, Jajar Genjang, Layang-Layang, Belah Ketupat', judul: 'Luas Bangun Datar: Segitiga, Persegi, Trapesium, Jajar Genjang, Layang-Layang, Belah Ketupat', video: 'dVI1egSlUvc' },
+          { label: 'Hitung Keliling Bangun Datar Dasar LENGKAP', judul: 'Hitung Keliling Bangun Datar Dasar LENGKAP', video: 'Y-H9l_6aY6o' },
+          { label: 'Menentukan Keliling Persegi Panjang dari Luasnya', judul: 'Menentukan Keliling Persegi Panjang dari Luasnya', video: 'Kcp9ViDGMfE' },
+          { label: 'Menentukan Luas Persegi Panjang dari Kelilingnya', judul: 'Menentukan Luas Persegi Panjang dari Kelilingnya', video: 'rGNu97L88o4' },
+          { label: 'Cara Membaca Diagram Kartesius', judul: 'Cara Membaca Diagram Kartesius', video: 'M4Lk2uh3fn4' },
+          { label: 'PGL Part 1: Gambaran Umum Persamaan Garis Lurus', judul: 'PGL Part 1: Gambaran Umum Persamaan Garis Lurus', video: 'clMtO8e0Cvo' },
+          { label: 'PGL Part 2: Gradien atau Kemiringan', judul: 'PGL Part 2: Gradien atau Kemiringan', video: 'bZH-BEkHMBU' },
+          { label: 'PGL Part 3: Menentukan Persamaan Garis', judul: 'PGL Part 3: Menentukan Persamaan Garis', video: 'lEEwv60mFPg' },
+          { label: 'Cara Cepat Menggambar Grafik Sesuai Persamaan Garis', judul: 'Cara Cepat Menggambar Grafik Sesuai Persamaan Garis', video: '2V36FffksSg' },
+          { label: 'PGL Part 4: Titik Potong Dua Garis', judul: 'PGL Part 4: Titik Potong Dua Garis', video: 'ZWbBQLbJ6GU' },
+          { label: 'PGL Part 5: Menerapkan Persamaan Garis di Kehidupan', judul: 'PGL Part 5: Menerapkan Persamaan Garis di Kehidupan', video: 'h9FULtJviik' },
+          { label: 'Titik Berpotongan Sumbu-X dan Sumbu-Y', judul: 'Titik Berpotongan Sumbu-X dan Sumbu-Y', video: 'yzaso-xnygY' },
+          { label: 'Cara Hitung Keliling Setengah Lingkaran', judul: 'Cara Hitung Keliling Setengah Lingkaran', video: 'A7dq8IN13go' },
+          { label: 'Kubus dan Balok: Volume dan Luas Permukaan', judul: 'Kubus dan Balok: Volume dan Luas Permukaan', video: 'hlOKjVmBdNA' },
+          { label: 'Prisma Segitiga: Volume dan Luas Permukaan', judul: 'Prisma Segitiga: Volume dan Luas Permukaan', video: 'OyUNcv7tX5M' },
+          { label: 'Limas Segi Empat: Volume dan Luas Permukaan', judul: 'Limas Segi Empat: Volume dan Luas Permukaan', video: 'YgyGiyEaBdQ' },
+          { label: 'Limas Segitiga: Luas Permukaan', judul: 'Limas Segitiga: Luas Permukaan', video: 'LI7PN9izutE' },
+          { label: 'Limas Segitiga: Volume', judul: 'Limas Segitiga: Volume', video: 'NlOLrSAc9m8' },
+          { label: 'Menentukan Sin Cos Tan pada Segitiga Siku-Siku', judul: 'Menentukan Sin Cos Tan pada Segitiga Siku-Siku', video: 'LLQjT0OSnEA' },
+          { label: 'Kesebangunan, Hubungan Antarsudut: Berpenyiku', judul: 'Kesebangunan, Hubungan Antarsudut: Berpenyiku', video: 'naveUvI9W_k' },
+          { label: 'Kesebangunan, Hubungan Antarsudut: Berpelurus', judul: 'Kesebangunan, Hubungan Antarsudut: Berpelurus', video: 'DipiOEWL7u4' },
+          { label: 'Kesebangunan, Hubungan Antarsudut: Bertolak Belakang', judul: 'Kesebangunan, Hubungan Antarsudut: Bertolak Belakang', video: 'GYuRRPr18hk' },
+          { label: 'Menghitung Besar Sudut dari Informasi Kecil pada Dua Garis Sejajar Dipotong', judul: 'Menghitung Besar Sudut dari Informasi Kecil pada Dua Garis Sejajar Dipotong', video: '62lmvFy7Khk' },
+          { label: 'Kesebangunan Dasar: Menentukan Besar Sisi dari Bangun Lainnya', judul: 'Kesebangunan Dasar: Menentukan Besar Sisi dari Bangun Lainnya', video: 'cpmTQXb3zcQ' },
+          { label: 'Kesebangunan pada Segitiga', judul: 'Kesebangunan pada Segitiga', video: 'YZQ0GAfQJLo' },
+          { label: 'Kesebangunan dan Kekongruenan', judul: 'Kesebangunan dan Kekongruenan', video: 'g1BmqWJ6WuI' },
+          { label: 'Tabung, Bola, Kerucut LENGKAP (Volume dan Luas Permukaan)', judul: 'Tabung, Bola, Kerucut LENGKAP (Volume dan Luas Permukaan)', video: 'XrdlZ2mBaoM' },
+          { label: 'Menghitung Kapasitas Suatu Wadah dalam Liter', judul: 'Menghitung Kapasitas Suatu Wadah dalam Liter', video: 'apKcS41yc1s' }
+        ]
+      },
+
+      calculus: {
+        title: 'Calculus',
+        topics: [
+          { label: 'Coming Soon', judul: 'TEMPAT JUDUL I', video: 'lIwAcWMV-a8' },
+          { label: 'Coming Soon', judul: 'TEMPAT JUDUL J', video: 'lIwAcWMV-a8' }
+        ]
+      },
+
+      statistika: {
+        title: 'Statistika',
+        topics: [
+          { label: 'Statistika Dasar: Mean, Median, Modus, Range', judul: 'Statistika Dasar: Mean, Median, Modus, Range', video: 'KLpHfpOFYoc' },
+          { label: 'Diagram Batang dari Tabel dan Data Sederhana', judul: 'Diagram Batang dari Tabel dan Data Sederhana', video: 'LLcMrvjgkyA' },
+          { label: 'Diagram Batang Rangkap Dua dan Tiga', judul: 'Diagram Batang Rangkap Dua dan Tiga', video: 'P8Z5D-qDye0' },
+          { label: 'Diagram Lingkaran dalam Derajat', judul: 'Diagram Lingkaran dalam Derajat', video: 'SZ5doqceyXw' },
+          { label: 'Membuat Diagram Garis Biasa dan Rangkap', judul: 'Membuat Diagram Garis Biasa dan Rangkap', video: 'neKtUv-KgCI' },
+          { label: 'Menyajikan Data Dalam Diagram Lingkaran Persen dan Derajat', judul: 'Menyajikan Data Dalam Diagram Lingkaran Persen dan Derajat', video: 'OFy731ZFu1M' },
+          { label: 'Menentukan Persentase Kenaikan/Penurunan dari Diagram', judul: 'Menentukan Persentase Kenaikan/Penurunan dari Diagram', video: 'oIszykAsrVY' },
+          { label: 'Pengenalan Konsep Dasar Peluang', judul: 'Pengenalan Konsep Dasar Peluang', video: 'fLPPgAINtzw' },
+          { label: 'Jenis-Jenis Peluang Kejadian Majemuk - Garis Besar', judul: 'Jenis-Jenis Peluang Kejadian Majemuk - Garis Besar', video: '-anMsu5zEBI' },
+          { label: 'Peluang Kejadian Saling Lepas', judul: 'Peluang Kejadian Saling Lepas', video: 's_WF3W11i6E' },
+          { label: 'Peluang Kejadian Tidak Saling Lepas', judul: 'Peluang Kejadian Tidak Saling Lepas', video: 'aorM_yIBFQw' },
+          { label: 'Peluang Saling Bebas dan Tidak Saling Bebas', judul: 'Peluang Saling Bebas dan Tidak Saling Bebas', video: 'i7dpgm6iEc0' },
+          { label: 'Peluang Kejadian Bersyarat', judul: 'Peluang Kejadian Bersyarat', video: '-76Y-cPlASk' }
+        ]
+      },
+
+      logika: {
+        title: 'Logika Matematika',
+        topics: [
+          { label: 'Coming Soon', judul: 'TEMPAT JUDUL M', video: 'lIwAcWMV-a8' },
+          { label: 'Coming Soon', judul: 'TEMPAT JUDUL N', video: 'lIwAcWMV-a8' }
+        ]
+      },
+
+      konversi: {
+        title: 'Daftar Konversi',
+        topics: [
+          { label: 'Coming Soon', judul: 'TEMPAT JUDUL I', video: 'lIwAcWMV-a8' },
+          { label: 'Coming Soon', judul: 'TEMPAT JUDUL J', video: 'lIwAcWMV-a8' }
+        ]
+      },
+
+      manipulasi: {
+        title: 'Manipulasi Angka',
+        topics: [
+            { label: 'Coming Soon', judul: 'TEMPAT JUDUL O', video: 'lIwAcWMV-a8' },
+            { label: 'Coming Soon', judul: 'TEMPAT JUDUL P', video: 'lIwAcWMV-a8' }
+        ]
+      },
+
+    };
+
+    const TEST_DATA = {
+      title: 'Tes Tulis',
+      topics: [
+        { label: 'Urutan Menghitung Bilangan Campuran (Tambah, Kurang, Kali, Bagi) yang Benar', judul: 'Urutan Menghitung Bilangan Campuran (Tambah, Kurang, Kali, Bagi) yang Benar', video: '-gYF_sePm1w' },
+        { label: 'Pecahan Dari Nol SAMPAI PAHAM', judul: 'Pecahan Dari Nol SAMPAI PAHAM', video: 'brTw7W45flo' },
+        { label: 'Teknik Menghitung Selisih Waktu dan Penjumlahan Waktu', judul: 'Teknik Menghitung Selisih Waktu dan Penjumlahan Waktu', video: 'tcInpmoQ2M0' },
+        { label: 'Konversi Waktu: Jam, Menit, Detik', judul: 'Konversi Waktu: Jam, Menit, Detik', video: 'MkTVFNGNKPI' },
+        { label: 'Menghitung Kapan Dua Objek Akan Bertemu', judul: 'Menghitung Kapan Dua Objek Akan Bertemu', video: 'iksBWa8_Ft4' },
+        { label: 'Hitung Waktu dan Kecepatan Kerja Beberapa Orang Kerjasama', judul: 'Hitung Waktu dan Kecepatan Kerja Beberapa Orang Kerjasama', video: 'S18-xfEb9Vs' },
+        { label: 'Hitung Diskon dalam Berbagai Keadaan', judul: 'Hitung Diskon dalam Berbagai Keadaan', video: 'elZzGGa9LDQ' },
+        { label: 'Ukur Kapasitas Wadah Apapun dalam Liter', judul: 'Ukur Kapasitas Wadah Apapun dalam Liter', video: 'apKcS41yc1s' },
+        { label: '35 Naik ke 78, Berapa Persen Kenaikan/Penurunannya?', judul: '35 Naik ke 78, Berapa Persen Kenaikan/Penurunannya?', video: '3vkdJvoDB8A' },
+        { label: 'Menentukan Umur Orang dengan Persamaan Aljabar', judul: 'Menentukan Umur Orang dengan Persamaan Aljabar', video: 'tVYiF6abDzE' },
+        { label: 'Persamaan Linear Dua Variabel (Ilmu Penting)', judul: 'Persamaan Linear Dua Variabel (Ilmu Penting)', video: 'EoXRybRtvtY' },
+        { label: 'Hitung Volume dan Luas Permukaan Kubus dan Balok', judul: 'Hitung Volume dan Luas Permukaan Kubus dan Balok', video: 'hlOKjVmBdNA' },
+        { label: 'CARA CEPAT Ubah Satuan Km/Jam ke m/s maupun sebaliknya', judul: 'CARA CEPAT Ubah Satuan Km/Jam ke m/s maupun sebaliknya', video: '-y4saB_T4Ak' },
+        { label: 'Mengubah Satuan Berat (Kg ke gr dan sebagainya)', judul: 'Mengubah Satuan Berat (Kg ke gr dan sebagainya)', video: 'Q-4kgjKCvqo' },
+        { label: 'Rasio Senilai dan Berbalik Nilai', judul: 'Rasio Senilai dan Berbalik Nilai', video: 'ADVrOV1j3Ng' },
+        { label: 'Rasio pada Durasi Waktu', judul: 'Rasio pada Durasi Waktu', video: 'qtZiTJDm9hw' },
+        { label: 'Rasio Dasar dengan Konversi Panjang dan Berat', judul: 'Rasio Dasar dengan Konversi Panjang dan Berat', video: 'loarXAzJFzA' },
+        { label: 'Rasio Umum (Versi Sederhana)', judul: 'Rasio Umum (Versi Sederhana)', video: '8nhxC6chtlU' },
+        { label: 'Cara Baca Skala Peta', judul: 'Cara Baca Skala Peta', video: 'LuU3oOKFvWE' },
+        { label: 'Perkalian Bilangan Desimal', judul: 'Perkalian Bilangan Desimal', video: 'T9VsxjEcNsg' },
+        { label: 'Pembagian Bilangan Desimal', judul: 'Pembagian Bilangan Desimal', video: 'SLcfXV2pjHo' },
+        { label: 'Tambah, Kurang, Kali, Bagi Desimal', judul: 'Tambah, Kurang, Kali, Bagi Desimal', video: 'dKlsRrS_k30' },
+        { label: 'Cara Temukan Nilai Variabel X dalam Soal Pecahan', judul: 'Cara Temukan Nilai Variabel X dalam Soal Pecahan', video: '_ZrG8b_Wrwg' },
+        { label: 'Mengubah Satuan Suhu: Celsius, Fahrenheit, Kelvin, Reaumur', judul: 'Mengubah Satuan Suhu: Celsius, Fahrenheit, Kelvin, Reaumur', video: 'Dake_nSvEfs' },
+        { label: 'Konsep Peluang Untuk Pemula SAMPAI PAHAM', judul: 'Konsep Peluang Untuk Pemula SAMPAI PAHAM', video: 'fLPPgAINtzw' }
+      ]
+    };
+
+    let currentLevel = 'sd';
+    let currentClassId = null;
+    let currentChapterId = null;
+
+    function openSection(id) {
+      closeLaunch();
+      if (id === 'kurikulum') {
+        setKurikulumLevel('sd');
+      }
+      const target = document.getElementById(id);
+      if (!target) return;
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    function closeLaunch() {
+      launchOverlay.classList.add('hidden');
+      refreshBodyScrollLock();
+    }
+
+    // Mengunci scroll body kapanpun salah satu overlay (pilih jalur belajar,
+    // modal info, atau donasi) sedang aktif, supaya saat user scroll di
+    // dalam overlay, halaman di belakangnya tidak ikut ter-scroll.
+    function refreshBodyScrollLock() {
+      const anyOverlayOpen =
+        !launchOverlay.classList.contains('hidden') ||
+        modalOverlay.classList.contains('active') ||
+        donationOverlay.classList.contains('active');
+      document.body.style.overflow = anyOverlayOpen ? 'hidden' : '';
+    }
+
+    function setKurikulumLevel(level) {
+      currentLevel = level;
+      currentClassId = null;
+      currentChapterId = null;
+      levelButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.level === level));
+      renderKurikulumClasses();
+      renderKurikulumVideo('Pilih topik untuk menampilkan video.');
+    }
+
+    function renderKurikulumClasses() {
+      const data = KURIKULUM_DATA[currentLevel];
+      classesContainer.innerHTML = '';
+      data.classes.forEach((kelas) => {
+        const item = document.createElement('div');
+        item.className = 'accordion-item';
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = kelas.label;
+        button.dataset.classId = kelas.id;
+
+        const details = document.createElement('div');
+        details.className = 'nested-list hidden';
+
+        button.addEventListener('click', () => {
+          if (currentClassId === kelas.id) {
+            currentClassId = null;
+            currentChapterId = null;
+            closeAllClassDetails();
+            renderKurikulumVideo('Pilih topik untuk menampilkan video.');
+            return;
+          }
+          currentClassId = kelas.id;
+          currentChapterId = null;
+          closeAllClassDetails();
+          button.classList.add('active');
+          details.classList.remove('hidden');
+          renderKurikulumChapters(kelas, details);
+          renderKurikulumVideo('Pilih topik untuk menampilkan video.');
+        });
+
+        item.append(button, details);
+        classesContainer.appendChild(item);
+      });
+    }
+
+    function closeAllClassDetails() {
+      classesContainer.querySelectorAll('.nested-list').forEach((panel) => panel.classList.add('hidden'));
+      classesContainer.querySelectorAll('button').forEach((btn) => btn.classList.remove('active'));
+    }
+
+    function renderKurikulumChapters(kelasData, container) {
+      container.innerHTML = '';
+
+      // SD dapat langsung memiliki topics tanpa BAB.
+      // SMP/SMA tetap menggunakan struktur chapters -> topics seperti sebelumnya.
+      if (Array.isArray(kelasData.topics)) {
+        renderKurikulumTopics(
+          { title: kelasData.label, topics: kelasData.topics },
+          container
+        );
+        return;
+      }
+
+      kelasData.chapters.forEach((bab) => {
+        const chapterItem = document.createElement('div');
+        chapterItem.className = 'accordion-item';
+
+        const chapterButton = document.createElement('button');
+        chapterButton.type = 'button';
+        chapterButton.textContent = bab.title;
+        chapterButton.dataset.chapterId = bab.id;
+
+        const chapterDetails = document.createElement('div');
+        chapterDetails.className = 'nested-list hidden';
+
+        chapterButton.addEventListener('click', () => {
+          // Jika BAB yang sedang terbuka ditekan lagi, tutup kembali.
+          if (currentChapterId === bab.id) {
+            currentChapterId = null;
+            container.querySelectorAll('.nested-list').forEach((panel) => panel.classList.add('hidden'));
+            container.querySelectorAll('button').forEach((btn) => btn.classList.remove('active'));
+            renderKurikulumVideo('Pilih topik untuk menampilkan video.');
+            return;
+          }
+
+          currentChapterId = bab.id;
+          container.querySelectorAll('.nested-list').forEach((panel) => panel.classList.add('hidden'));
+          container.querySelectorAll('button').forEach((btn) => btn.classList.remove('active'));
+          chapterButton.classList.add('active');
+          chapterDetails.classList.remove('hidden');
+          renderKurikulumTopics(bab, chapterDetails);
+          renderKurikulumVideo('Pilih topik untuk menampilkan video.');
+        });
+
+        chapterItem.append(chapterButton, chapterDetails);
+        container.appendChild(chapterItem);
+      });
+    }
+
+    function renderKurikulumTopics(chapterData, container) {
+      container.innerHTML = '';
+      const topicTitle = document.createElement('div');
+      topicTitle.textContent = `Topik ${chapterData.title}`;
+      topicTitle.style.fontWeight = '700';
+      topicTitle.style.marginBottom = '0.75rem';
+      topicTitle.style.color = '#104862';
+
+      container.appendChild(topicTitle);
+
+      chapterData.topics.forEach((topic) => {
+        const topicItem = document.createElement('div');
+        topicItem.className = 'accordion-item';
+
+        const topicButton = document.createElement('button');
+        topicButton.type = 'button';
+        topicButton.textContent = topic.label;
+        topicButton.dataset.video = topic.video;
+        topicButton.dataset.title = topic.judul;
+
+        const topicDetails = document.createElement('div');
+        topicDetails.className = 'nested-list hidden';
+
+        const videoHolder = document.createElement('div');
+        videoHolder.className = 'topic-video';
+        videoHolder.innerHTML = '<div class="empty">Pilih topik untuk menampilkan video.</div>';
+
+        topicButton.addEventListener('click', () => {
+          // Jika topik yang sedang terbuka ditekan lagi, tutup videonya.
+          if (topicDetails.classList.contains('hidden') === false) {
+            topicDetails.classList.add('hidden');
+            topicButton.classList.remove('active');
+            videoHolder.innerHTML = '<div class="empty">Pilih topik untuk menampilkan video.</div>';
+            return;
+          }
+
+          container.querySelectorAll('.nested-list').forEach((panel) => panel.classList.add('hidden'));
+          container.querySelectorAll('button').forEach((btn) => btn.classList.remove('active'));
+          topicButton.classList.add('active');
+          topicDetails.classList.remove('hidden');
+          renderKurikulumVideo(topic, videoHolder);
+          topicButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        topicDetails.appendChild(videoHolder);
+        topicItem.append(topicButton, topicDetails);
+        container.appendChild(topicItem);
+      });
+    }
+
+    function updateTopicSelection(container, activeButton) {
+      container.querySelectorAll('button').forEach((btn) => {
+        btn.classList.toggle('active', btn === activeButton);
+      });
+    }
+
+    function getYouTubeId(value) {
+      if (!value) return '';
+      try {
+        const url = new URL(value);
+        if (url.hostname.includes('youtu.be')) {
+          return url.pathname.slice(1);
+        }
+        if (url.hostname.includes('youtube.com')) {
+          const params = url.searchParams.get('v');
+          if (params) return params;
+          const pathParts = url.pathname.split('/').filter(Boolean);
+          return pathParts[pathParts.length - 1] || value;
+        }
+      } catch (error) {
+        return value;
+      }
+      return value;
+    }
+
+    function buildYouTubeEmbedHtml(videoId, title) {
+      return `
+        <div class="embed-wrap">
+          <iframe src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1" 
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen title="${title}"></iframe>
+        </div>
+        <div class="video-fallback">
+          <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" rel="noopener noreferrer">
+            Buka langsung di YouTube jika pemutar video bermasalah
+          </a>
+        </div>
+      `;
+    }
+
+    function renderKurikulumVideo(topic, panel = kurikulumVideo) {
+      if (typeof topic === 'string') {
+        panel.innerHTML = '';
+        return;
+      }
+      const videoId = getYouTubeId(topic.video);
+      if (!videoId || videoId.includes('TEMPAT_LINK')) {
+        panel.innerHTML = '';
+        return;
+      }
+      panel.innerHTML = buildYouTubeEmbedHtml(videoId, topic.judul);
+    }
+
+    function renderTopicAccordion(container, topics, videoRenderer) {
+      container.innerHTML = '';
+
+      topics.forEach((topic) => {
+        const topicItem = document.createElement('div');
+        topicItem.className = 'accordion-item';
+
+        const topicButton = document.createElement('button');
+        topicButton.type = 'button';
+        topicButton.textContent = topic.label;
+        topicButton.dataset.video = topic.video;
+        topicButton.dataset.title = topic.judul;
+
+        const topicDetails = document.createElement('div');
+        topicDetails.className = 'nested-list hidden';
+
+        const videoHolder = document.createElement('div');
+        videoHolder.className = 'topic-video';
+        videoHolder.innerHTML = '<div class="empty">Pilih topik untuk menampilkan video.</div>';
+
+        topicButton.addEventListener('click', () => {
+          // Jika topik yang sedang terbuka ditekan lagi, tutup videonya.
+          if (!topicDetails.classList.contains('hidden')) {
+            topicDetails.classList.add('hidden');
+            topicButton.classList.remove('active');
+            videoHolder.innerHTML = '<div class="empty">Pilih topik untuk menampilkan video.</div>';
+            return;
+          }
+
+          container.querySelectorAll('.nested-list').forEach((panel) => panel.classList.add('hidden'));
+          container.querySelectorAll('button').forEach((btn) => btn.classList.remove('active'));
+
+          topicButton.classList.add('active');
+          topicDetails.classList.remove('hidden');
+
+          videoRenderer(topic, videoHolder);
+          topicButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        topicDetails.appendChild(videoHolder);
+        topicItem.append(topicButton, topicDetails);
+        container.appendChild(topicItem);
+      });
+    }
+
+    function renderCategoryTopics(categoryKey) {
+      // Jika kategori yang sedang terbuka ditekan lagi, collapse kembali:
+      // rectangle dan judul kecilnya ikut disembunyikan.
+      if (currentUmumCategory === categoryKey) {
+        umumTopicsContainer.innerHTML = '';
+        umumPanel.hidden = true;
+        currentUmumCategory = null;
+        return;
+      }
+
+      currentUmumCategory = categoryKey;
+      umumTopicsContainer.innerHTML = '';
+
+      const category = UMUM_DATA[categoryKey];
+
+      // Judul kecil di pojok kiri atas rectangle mengikuti kategori yang ditekan
+      // (mis. "Aritmatika", "Geometri", dst), lalu rectangle-nya ditampilkan.
+      umumPanelTitle.textContent = category.title;
+      umumPanel.hidden = false;
+
+      renderTopicAccordion(
+        umumTopicsContainer,
+        category.topics,
+        (topic, holder) => renderVideo(holder, topic)
+      );
+    }
+
+    function renderTestTopics() {
+      document.getElementById('test-topics-title').textContent = TEST_DATA.title;
+
+      renderTopicAccordion(
+        testTopicsContainer,
+        TEST_DATA.topics,
+        (topic, holder) => renderVideo(holder, topic)
+      );
+    }
+
+    function toggleTestTopics() {
+      const isOpen = !testTopicsGroup.hidden;
+
+      if (isOpen) {
+        testTopicsGroup.hidden = true;
+        testToggle.classList.remove('active');
+        testToggle.setAttribute('aria-expanded', 'false');
+        testTopicsContainer.innerHTML = '';
+        return;
+      }
+
+      testTopicsGroup.hidden = false;
+      testToggle.classList.add('active');
+      testToggle.setAttribute('aria-expanded', 'true');
+      renderTestTopics();
+    }
+
+    function updateActiveTopic(container, activeButton) {
+      container.querySelectorAll('button').forEach((btn) => {
+        btn.classList.toggle('active', btn === activeButton);
+      });
+    }
+
+    function renderVideo(panel, topic) {
+      const videoId = getYouTubeId(topic.video);
+      if (!videoId || videoId.includes('TEMPAT_LINK')) {
+        panel.innerHTML = '';
+        return;
+      }
+      panel.innerHTML = buildYouTubeEmbedHtml(videoId, topic.judul);
+    }
+
+    function showModal(type) {
+      modalOverlay.classList.add('active');
+      modalOverlay.setAttribute('aria-hidden', 'false');
+      refreshBodyScrollLock();
+      const data = {
+        bank: {
+          title: 'Bank Soal',
+          message: 'Pilihan contoh bank soal untuk latihan lebih banyak.',
+          items: ['Coming Soon', 'Coming Soon', 'Coming Soon', 'Coming Soon']
+        },
+        merch: {
+          title: 'Kertas Kopean',
+          message: 'kertas kopean untuk catatan belajar.',
+          items: ['Coming Soon', 'Coming Soon', 'Coming Soon', 'Coming Soon']
+        },
+        tools: {
+          title: 'Alat Bantu Matematik',
+          message: 'Alat bantu belajar seperti kalkulator dan grafik interaktif.',
+          items: ['Coming Soon', 'Coming Soon', 'Coming Soon', 'Coming Soon']
+        }
+      };
+      const selected = data[type] || data.bank;
+      document.getElementById('modalTitle').textContent = selected.title;
+      modalText.textContent = selected.message;
+      modalList.innerHTML = selected.items.map(item => `<div>${item}</div>`).join('');
+    }
+
+    function closeModal() {
+      modalOverlay.classList.remove('active');
+      modalOverlay.setAttribute('aria-hidden', 'true');
+      refreshBodyScrollLock();
+    }
+
+    modalOverlay.addEventListener('click', (event) => {
+      if (event.target === modalOverlay) closeModal();
+    });
+
+    levelButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        setKurikulumLevel(button.dataset.level);
+      });
+    });
+
+    categoryButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const isSameCategory = currentUmumCategory === button.dataset.category;
+
+        if (isSameCategory) {
+          categoryButtons.forEach((item) => item.classList.remove('active'));
+        } else {
+          categoryButtons.forEach((item) => item.classList.toggle('active', item === button));
+        }
+
+        renderCategoryTopics(button.dataset.category);
+      });
+    });
+
+    topButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        showModal(btn.dataset.modal);
+      });
+    });
+
+    testToggle.addEventListener('click', toggleTestTopics);
+    const donationButton = Array.from(document.querySelectorAll('.footer-actions button')).find((button) => button.textContent.trim() === 'Bantu Berkembang');
+    const donationOverlay = document.getElementById('donationOverlay');
+    const donationClose = document.getElementById('donationClose');
+
+    function openDonation() {
+      donationOverlay.classList.add('active');
+      donationOverlay.setAttribute('aria-hidden', 'false');
+      donationButton.setAttribute('aria-expanded', 'true');
+      refreshBodyScrollLock();
+    }
+
+    function closeDonation() {
+      donationOverlay.classList.remove('active');
+      donationOverlay.setAttribute('aria-hidden', 'true');
+      donationButton.setAttribute('aria-expanded', 'false');
+      refreshBodyScrollLock();
+    }
+
+    donationButton.addEventListener('click', openDonation);
+    donationClose.addEventListener('click', closeDonation);
+    donationOverlay.addEventListener('click', (event) => {
+      if (event.target === donationOverlay) closeDonation();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && donationOverlay.classList.contains('active')) {
+        closeDonation();
+      }
+    });
+
+    setKurikulumLevel(currentLevel);
+    refreshBodyScrollLock();
+  </script>
+</body>
+</html>
