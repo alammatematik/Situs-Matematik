@@ -59,7 +59,7 @@
 
     .embed-wrap iframe {
       width: 100%;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: var(--video-ratio, 16 / 9);
       height: auto;
       border: 0;
       display: block;
@@ -428,11 +428,15 @@
       place-items: center;
     }
 
-    .topic-video iframe {
-      width: 100%;
-      min-height: 350px;
-      border: 0;
-    }
+    /* CATATAN: sengaja TIDAK ada aturan ".topic-video iframe" lagi di
+       sini. Dulu ada aturan lama yang memaksa min-height:350px pada
+       iframe — itu yang bikin video ter-crop/zoom aneh di HP, karena
+       di layar sempit tinggi hasil hitungan rasio 16:9 bisa lebih
+       kecil dari 350px, lalu "dipaksa naik" jadi hampir persegi oleh
+       min-height itu (bukan 16:9 lagi). Ukuran iframe sekarang
+       SEPENUHNYA diatur oleh ".embed-wrap iframe" di bawah, yang
+       memakai aspect-ratio (bisa disesuaikan per video, lihat
+       buildYouTubeEmbedHtml). */
 
     .topic-video .empty {
       color: #cbd5e1;
@@ -629,22 +633,32 @@
 
     .modal {
       width: min(620px, 100%);
+      max-height: calc(100vh - 3rem);
       padding: 1.75rem;
       border-radius: 28px;
       background: white;
       box-shadow: var(--shadow);
       position: relative;
       color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-sizing: border-box;
     }
 
     .modal h3 {
       margin-top: 0;
+      margin-bottom: 0.4rem;
       font-size: 1.5rem;
+      padding-right: 2rem;
+      flex-shrink: 0;
     }
 
     .modal p {
       color: var(--muted);
       line-height: 1.75;
+      margin: 0;
+      flex-shrink: 0;
     }
 
     .modal-close {
@@ -656,19 +670,70 @@
       font-size: 1.3rem;
       color: var(--muted);
       cursor: pointer;
+      z-index: 1;
     }
 
+    /* Hanya bagian INI yang boleh discroll. Judul (h3) dan deskripsi
+       (p) di atas sengaja diberi flex-shrink:0 supaya selalu terkunci
+       terlihat, apapun panjangnya daftar "Coming Soon" di bawah. */
     .modal-list {
       display: grid;
       gap: 0.85rem;
       margin-top: 1rem;
+      padding-top: 1rem;
+      padding-right: 0.35rem;
+      border-top: 1px dashed rgba(15,23,42,0.12);
+      overflow-y: auto;
+      min-height: 0;
+      scrollbar-width: thin;
     }
 
-    .modal-list div {
+    .modal-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .modal-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .modal-list::-webkit-scrollbar-thumb {
+      background: rgba(15,23,42,0.18);
+      border-radius: 999px;
+    }
+
+    .modal-list div,
+    .modal-list a {
+      display: block;
       padding: 1rem 1rem;
       border-radius: 18px;
       background: #f8fafc;
       border: 1px solid rgba(15,23,42,0.06);
+      text-decoration: none;
+      color: inherit;
+      font-family: inherit;
+      font-weight: inherit;
+      font-size: inherit;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+
+    /* Item dengan link (siap diklik) diberi sedikit afordansi visual
+       berbeda dari kotak "Coming Soon" biasa, supaya jelas mana yang
+       sudah aktif. */
+    .modal-list a {
+      border-color: rgba(29,78,216,0.25);
+      cursor: pointer;
+    }
+
+    .modal-list a:active {
+      transform: scale(0.98);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .modal-list a:hover {
+        transform: translateY(-2px);
+        background: #eef2ff;
+        border-color: var(--primary);
+      }
     }
 
     .video-panel iframe {
@@ -681,6 +746,309 @@
       color: #cbd5e1;
       padding: 2rem;
       text-align: center;
+    }
+
+    /* ============================================================
+       ===== BANK SOAL: badge kecil di atas button besar =====
+       Cara pakai (reusable, tanpa perlu tulis HTML/CSS baru):
+       1) Button yang di-generate JS (Kelas/Bab/Topik di Kurikulum,
+          Topik di Umum & Tes Tulis): tambahkan properti
+          `bankSoal: { free: 'link...', premium: 'link...' }`
+          pada entri data terkait di KURIKULUM_DATA / UMUM_DATA /
+          TEST_DATA. Badge otomatis muncul menempel di button itu.
+       2) Button statis di HTML (mis. tombol SD/SMP/SMA, kategori
+          Umum, atau tombol "Tes Tulis"): cukup tambahkan atribut
+          data-banksoal-free="link" data-banksoal-premium="link"
+          langsung di tag <button>-nya.
+       Gambar paket (images/ebook1.png untuk gratis,
+       images/ebook2.png untuk premium) SAMA untuk semua badge di
+       seluruh situs — yang berbeda per badge hanyalah dua link di
+       atas.
+       ============================================================ */
+    .banksoal-anchor {
+      position: relative;
+      display: block;
+    }
+
+    .banksoal-anchor .has-banksoal-badge {
+      padding-right: 5.5rem;
+    }
+
+    .banksoal-anchor .banksoal-badge {
+      all: unset;
+      box-sizing: border-box;
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      background: #f8fafc;
+      border: 1.5px solid rgba(29,78,216,0.35);
+      color: var(--primary);
+      font-family: 'Teachers', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
+
+    /* Catatan: transform di bawah ini sengaja diberi !important.
+       Badge ini "menumpang" di dalam container yang sama dengan
+       button besar (.item-list, .accordion-item, dst), yang punya
+       aturan generik seperti ".item-list button:hover/:active" untuk
+       SEMUA elemen <button> di dalamnya (termasuk badge ini). Tanpa
+       !important, aturan generik itu bisa "membajak" nilai transform
+       badge saat hover/klik dan menghapus posisi tengahnya
+       (translateY(-50%)) sehingga badge terlihat melompat jauh ke
+       bawah. !important memastikan posisi tengah badge selalu
+       terjaga di semua state. */
+    .banksoal-anchor .banksoal-badge:active {
+      transform: translateY(-50%) scale(0.94) !important;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .banksoal-anchor .banksoal-badge:hover {
+        background: #eff6ff;
+        border-color: var(--primary);
+        /* Tanpa glow — hanya outline yang menebal sedikit (subtle),
+           dibuat lewat box-shadow tipis tanpa blur (bukan efek sinar). */
+        box-shadow: 0 0 0 1px rgba(29,78,216,0.55);
+        /* Terangkat sedikit saja ke ATAS (subtle). */
+        transform: translateY(-50%) translateY(-1px) !important;
+      }
+
+      /* Saat badge "Bank Soal" dihover, matikan efek hover milik
+         button besar di baliknya (transform selalu dimatikan; warna
+         hover dimatikan HANYA jika button itu belum dalam status
+         terpilih/active, supaya highlight "sedang dipilih" tidak ikut
+         hilang). */
+      .banksoal-hover-suppress:hover {
+        transform: none !important;
+      }
+
+      .banksoal-hover-suppress:not(.active):hover {
+        background: #fff !important;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .banksoal-anchor .has-banksoal-badge {
+        padding-right: 4.4rem;
+      }
+
+      .banksoal-anchor .banksoal-badge {
+        top: 50%;
+        right: 6px;
+        padding: 0.24rem 0.5rem;
+        font-size: 0.62rem;
+      }
+
+      .banksoal-anchor .banksoal-badge:active {
+        transform: translateY(-50%) scale(0.94) !important;
+      }
+    }
+
+    /* ============================================================
+       ===== Modal Bank Soal (redesign): container hitam pekat
+       50% opacity + sudut membulat, menampilkan dua kartu pricing
+       PENUH (ebook1.png / ebook2.png, rasio 4:7). Di atas tiap kartu
+       ditumpuk lapisan gambar button terpisah (ebook1_button.png /
+       ebook2_button.png) — kanvasnya PERSIS sama ukurannya dengan
+       kartu penuhnya (1600x2800) dan transparan di luar area button,
+       jadi cukup ditumpuk pas di posisi yang sama (inset:0) supaya
+       otomatis presisi tanpa perlu koordinat manual. Efek hover/klik
+       diterapkan ke lapisan button ini saja. ============================================================ */
+    .banksoal-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15,23,42,0.55);
+      z-index: 200;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .banksoal-overlay.active {
+      display: flex;
+    }
+
+    .banksoal-panel {
+      position: relative;
+      width: auto;
+      max-width: min(94vw, 720px);
+      max-height: calc(100vh - 2rem);
+      overflow: auto;
+      background: rgba(0,0,0,0.5);
+      border-radius: 24px;
+      padding: 1rem;
+      box-sizing: border-box;
+      animation: donationReveal 0.25s ease;
+    }
+
+    .banksoal-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .banksoal-source {
+      margin: 0;
+      color: #fff;
+      font-family: 'Teachers', sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }
+
+    .banksoal-close {
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    .banksoal-close:active {
+      transform: scale(0.92);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .banksoal-close:hover {
+        background: rgba(255,255,255,0.25);
+      }
+    }
+
+    .banksoal-choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      justify-items: center;
+      gap: 0.6rem;
+    }
+
+    .banksoal-card {
+      position: relative;
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 7;
+      /* Pengaman tambahan: kalau layar pendek (mis. hp mode landscape),
+         kartu ikut mengecil berdasarkan tinggi layar juga, bukan cuma
+         lebar — supaya tidak sampai perlu scroll di orientasi itu. */
+      max-height: min(78vh, 620px);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f1f5f9;
+      text-decoration: none;
+    }
+
+    .banksoal-card-bg,
+    .banksoal-card-btn {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .banksoal-card-bg {
+      pointer-events: none;
+    }
+
+    .banksoal-card-btn {
+      pointer-events: none;
+      transition: transform 0.18s ease, filter 0.18s ease;
+    }
+
+    /* "Hotspot": area tak-terlihat yang posisi & ukurannya dihitung
+       persis dari bounding-box asli ebook1_button.png / ebook2_button.png
+       (bagian yang tidak transparan). Efek hover/klik hanya menyala
+       kalau cursor betul-betul di atas hotspot ini — bukan di
+       seluruh kartu — memakai selector "~" (general sibling) untuk
+       menyalakan efek pada lapisan .banksoal-card-btn di sebelahnya. */
+    .banksoal-card-hotspot {
+      position: absolute;
+      z-index: 2;
+      cursor: pointer;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .banksoal-card-hotspot:hover ~ .banksoal-card-btn {
+        transform: translateY(-5px);
+        filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35));
+      }
+    }
+
+    .banksoal-card-hotspot:active ~ .banksoal-card-btn {
+      transform: translateY(0);
+      filter: brightness(1.15) drop-shadow(0 0 10px rgba(255,255,255,0.65));
+    }
+
+    @media (max-width: 380px) {
+      .banksoal-panel {
+        padding: 0.8rem;
+        border-radius: 20px;
+      }
+
+      .banksoal-choices {
+        gap: 0.45rem;
+      }
+
+      .banksoal-source {
+        font-size: 0.8rem;
+      }
+
+      .banksoal-close {
+        width: 30px;
+        height: 30px;
+        font-size: 1.05rem;
+      }
+    }
+
+    /* ----- Versi PC/desktop: kartu diatur berdasarkan TINGGI layar
+       (vh) supaya modal selalu muat satu layar tanpa scroll, dan
+       ditampilkan besar & mengesankan (sesuai maksud desain baru
+       ini). Versi HP (portrait) tetap memakai lebar penuh seperti di
+       atas. ----- */
+    @media (min-width: 768px) {
+      .banksoal-panel {
+        padding: 1.4rem 1.5rem;
+      }
+
+      .banksoal-source {
+        font-size: 1.05rem;
+      }
+
+      .banksoal-choices {
+        grid-template-columns: repeat(2, max-content);
+        justify-content: center;
+        justify-items: center;
+        gap: 1.1rem;
+      }
+
+      .banksoal-card {
+        width: auto;
+        height: min(72vh, 620px);
+      }
     }
 
     /* ===== Footer ===== */
@@ -1258,9 +1626,9 @@
         <span class="logo"><img src="images/Logo Left Corner.png" alt="Alam Matematik"></span>
       </button>
       <nav class="topnav" aria-label="Navigasi utama">
+        <button type="button" data-modal="course">Course Sekolah</button>
         <button type="button" data-modal="bank">Bank Soal</button>
-        <button type="button" data-modal="merch">Kertas Kopean</button>
-        <button type="button" data-modal="tools">Alat Bantu Matematik</button>
+        <button type="button" data-modal="tools">Alat Bantu</button>
       </nav>
     </header>
 
@@ -1444,6 +1812,30 @@
     </div>
   </div>
 
+  <!-- Modal "Bank Soal": satu modal dipakai ulang untuk SEMUA badge Bank
+       Soal di halaman ini. Isinya (link Gratis & Premium) diganti lewat
+       JavaScript setiap kali sebuah badge Bank Soal diklik. -->
+  <div class="banksoal-overlay" id="banksoalOverlay" aria-hidden="true">
+    <div class="banksoal-panel" role="dialog" aria-modal="true" aria-labelledby="banksoalSource">
+      <div class="banksoal-topbar">
+        <p class="banksoal-source" id="banksoalSource">Bank Soal</p>
+        <button type="button" class="banksoal-close" id="banksoalClose" aria-label="Tutup Bank Soal">×</button>
+      </div>
+      <div class="banksoal-choices">
+        <a class="banksoal-card" id="banksoalFreeCard" href="#" target="_blank" rel="noopener noreferrer" aria-label="Bank Soal versi gratis">
+          <img class="banksoal-card-bg" data-src="images/ebook1.png" alt="">
+          <span class="banksoal-card-hotspot" style="left:7.19%; top:90.68%; width:85.62%; height:6.64%;"></span>
+          <img class="banksoal-card-btn" data-src="images/ebook1_button.png" alt="">
+        </a>
+        <a class="banksoal-card" id="banksoalPremiumCard" href="#" target="_blank" rel="noopener noreferrer" aria-label="Bank Soal versi premium">
+          <img class="banksoal-card-bg" data-src="images/ebook2.png" alt="">
+          <span class="banksoal-card-hotspot" style="left:6.69%; top:89.82%; width:86.31%; height:7.43%;"></span>
+          <img class="banksoal-card-btn" data-src="images/ebook2_button.png" alt="">
+        </a>
+      </div>
+    </div>
+  </div>
+
   <script>
     const launchOverlay = document.getElementById('launchOverlay');
     const topButtons = document.querySelectorAll('[data-modal]');
@@ -1461,6 +1853,109 @@
     const modalOverlay = document.getElementById('modalOverlay');
     const modalText = document.getElementById('modalText');
     const modalList = document.getElementById('modalList');
+
+    const banksoalOverlay = document.getElementById('banksoalOverlay');
+    const banksoalClose = document.getElementById('banksoalClose');
+    const banksoalFreeCard = document.getElementById('banksoalFreeCard');
+    const banksoalPremiumCard = document.getElementById('banksoalPremiumCard');
+    const banksoalSource = document.getElementById('banksoalSource');
+
+    // ============================================================
+    // ===== BANK SOAL: fungsi inti (reusable) =====
+    // ============================================================
+
+    // Menempelkan badge kecil "Bank Soal" tepat di atas sebuah button
+    // besar yang sudah ada, tanpa mengubah perilaku klik button itu
+    // sendiri. `links` = { free: 'url', premium: 'url' }.
+    function attachBankSoalBadge(buttonEl, links) {
+      if (!buttonEl || !buttonEl.parentNode) return null;
+      if (!links || (!links.free && !links.premium)) return null;
+      // Jangan pasang dua kali pada button yang sama.
+      if (buttonEl.parentNode.classList && buttonEl.parentNode.classList.contains('banksoal-anchor')) {
+        return null;
+      }
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'banksoal-anchor';
+      buttonEl.parentNode.insertBefore(wrapper, buttonEl);
+      wrapper.appendChild(buttonEl);
+
+      // Kasih ruang di sisi kanan supaya tulisan button tidak
+      // tertutup badge.
+      buttonEl.classList.add('has-banksoal-badge');
+
+      const badge = document.createElement('button');
+      badge.type = 'button';
+      badge.className = 'banksoal-badge';
+      badge.textContent = 'Bank Soal';
+      badge.setAttribute('aria-label', 'Buka pilihan Bank Soal');
+
+      // Saat cursor di atas badge, matikan efek hover button besar.
+      badge.addEventListener('mouseenter', () => buttonEl.classList.add('banksoal-hover-suppress'));
+      badge.addEventListener('mouseleave', () => buttonEl.classList.remove('banksoal-hover-suppress'));
+
+      // stopPropagation supaya klik badge tidak ikut memicu klik
+      // (buka/tutup accordion) pada button besar di baliknya.
+      badge.addEventListener('click', (event) => {
+        event.stopPropagation();
+        // Label asal otomatis diambil dari tulisan button itu sendiri
+        // (mis. "BAB 1: Bilangan Bulat") — tidak perlu diisi manual.
+        // Mau pakai teks lain? Tambahkan `label: '...'` di dalam
+        // bankSoal-nya, itu akan dipakai sebagai pengganti.
+        const source = (links.label && links.label.trim())
+          ? links.label.trim()
+          : buttonEl.textContent.trim();
+        openBankSoal(links, source);
+      });
+
+      wrapper.appendChild(badge);
+      return badge;
+    }
+
+    // Memindai seluruh halaman untuk button STATIS (bukan hasil
+    // generate JS) yang diberi atribut data-banksoal-free /
+    // data-banksoal-premium, lalu otomatis menempelkan badgenya.
+    // Contoh pemakaian di HTML:
+    //   <button data-banksoal-free="link..." data-banksoal-premium="link...">SMP</button>
+    function initStaticBankSoalButtons(root = document) {
+      root.querySelectorAll('[data-banksoal-free], [data-banksoal-premium]').forEach((el) => {
+        attachBankSoalBadge(el, {
+          free: el.dataset.banksoalFree || '',
+          premium: el.dataset.banksoalPremium || '',
+          label: el.dataset.banksoalLabel || ''
+        });
+      });
+    }
+
+    // Gambar kartu (ebook1/ebook2 + versi button-nya) baru diminta ke
+    // server saat modal PERTAMA KALI dibuka — bukan langsung ikut
+    // ter-load saat halaman dibuka — supaya loading awal situs tetap
+    // ringan bagi pengunjung yang tidak membuka Bank Soal.
+    function loadBankSoalImages() {
+      banksoalOverlay.querySelectorAll('img[data-src]').forEach((img) => {
+        if (!img.getAttribute('src')) {
+          img.src = img.dataset.src;
+        }
+      });
+    }
+
+    function openBankSoal(links, source) {
+      const freeLink = (links && links.free) ? links.free : '#';
+      const premiumLink = (links && links.premium) ? links.premium : '#';
+      banksoalFreeCard.href = freeLink;
+      banksoalPremiumCard.href = premiumLink;
+      banksoalSource.textContent = source ? `Bank soal untuk: ${source}` : 'Bank Soal';
+      loadBankSoalImages();
+      banksoalOverlay.classList.add('active');
+      banksoalOverlay.setAttribute('aria-hidden', 'false');
+      refreshBodyScrollLock();
+    }
+
+    function closeBankSoal() {
+      banksoalOverlay.classList.remove('active');
+      banksoalOverlay.setAttribute('aria-hidden', 'true');
+      refreshBodyScrollLock();
+    }
 
     const KURIKULUM_DATA = {
       sd: {
@@ -1514,12 +2009,18 @@
               {
                 id: 'smp-7-a',
                 title: 'BAB 1: Bilangan Bulat',
+                // Contoh pemakaian: cukup tambahkan properti `bankSoal` di
+                // sini (free & premium), badge "Bank Soal" otomatis muncul
+                // menempel di button BAB ini. Ganti '#' dengan link Anda.
+                bankSoal: { free: 'http://lynk.id/alammatematik/gx0ko5j299w3', premium: 'http://lynk.id/alammatematik/rwxgz8rx8vxe' },
                 topics: [
                   { label: 'Penjumlahan Bilangan Bulat', judul: 'Contoh Video Topik A', video: 'dgG0U6Lj7nY' },
                   { label: 'Pengurangan Bilangan Bulat', judul: 'Contoh Video Topik B', video: 'k9j2vlyhWss' },
                   { label: 'Perkalian Bilangan Bulat - Perkalian Bersusun', judul: 'Contoh Video Topik C', video: 'ffg4BsACGwk' },
                   { label: 'Pembagian Bilagan Bulat - Pembagian Bersusun', judul: 'Contoh Video Topik D', video: 'zXyxIgmrflc' },
-                  { label: 'Menghitung Bilangan Bulat Campuran', judul: 'Contoh Video Topik E', video: '-bxMX8SY9-U' }
+                  { label: 'Menghitung Bilangan Bulat Campuran', judul: 'Contoh Video Topik E', video: '-bxMX8SY9-U' },
+                  { label: 'Pengenalan Pola Dasar (BONUS tapi sering dipakai)', judul: 'Contoh Video Topik E', video: 'uMS7CSxvoq8' },
+                  { label: 'Mengapa Matematika Harus Banget Pakai Huruf (BONUS)', judul: 'Contoh Video Topik E', video: '79zQNiYmQkM' }
                 ]
               },
               {
@@ -1594,7 +2095,7 @@
                   { label: 'Diagram Batang Rangkap Dua dan Tiga', judul: 'Contoh Video Topik B', video: 'P8Z5D-qDye0' },
                   { label: 'Membuat Diagram Garis Biasa dan Garis Rangkap', judul: 'Contoh Video Topik C', video: 'neKtUv-KgCI' },
                   { label: 'Diagram Lingkaran dalam Derajat', judul: 'Contoh Video Topik D', video: 'SZ5doqceyXw' },
-                  { label: 'Menyajikan Data Dalam Diagram Lingkaran Persen dan Derajat', judul: 'Contoh Video Topik E', video: 'OFy731ZFu1M' },
+                  { label: 'Menyajikan Data dalam Diagram Lingkaran Persen dan Derajat', judul: 'Contoh Video Topik E', video: 'OFy731ZFu1M' },
                   { label: 'Menentukan Persentase Kenaikan/Penurunan dari Diagram', judul: 'Contoh Video Topik F', video: 'oIszykAsrVY' },
                 ]
               },
@@ -1867,6 +2368,8 @@
           { label: 'Perkalian Berususun', judul: 'Perkalian Berususun', video: 'ffg4BsACGwk' },
           { label: 'Pembagian Bersusun - Metode Porogapit', judul: 'Pembagian Bersusun - Metode Porogapit', video: 'zXyxIgmrflc' },
           { label: 'Cara Operasi Hitung Bilangan Campuran (Tambah Kurang Kali Bagi Kurung)', judul: 'Cara Operasi Hitung Bilangan Campuran (Tambah Kurang Kali Bagi Kurung)', video: '-bxMX8SY9-U' },
+          { label: 'Pengenalan Pola Bilangan Dasar', judul: 'Contoh Video Topik E', video: 'uMS7CSxvoq8' },
+          { label: 'Mengapa Matematika Harus Banget Pakai Huruf (BONUS)', judul: 'Contoh Video Topik E', video: '79zQNiYmQkM' },
           { label: 'Mencari KPK dan FPB dengan Pohon Faktor', judul: 'Mencari KPK dan FPB dengan Pohon Faktor', video: 'mW8EjuJogMs' },
           { label: 'Mencari KPK dan FPB Tanpa Pohon Faktor', judul: 'Mencari KPK dan FPB Tanpa Pohon Faktor', video: '-CN5eLaOuwE' },
           { label: 'Jumlahkan dan Kurangi Waktu', judul: 'Jumlahkan dan Kurangi Waktu', video: 'tcInpmoQ2M0' },
@@ -2088,6 +2591,7 @@
       topics: [
         { label: 'Urutan Menghitung Bilangan Campuran (Tambah, Kurang, Kali, Bagi) yang Benar', judul: 'Urutan Menghitung Bilangan Campuran (Tambah, Kurang, Kali, Bagi) yang Benar', video: '-gYF_sePm1w' },
         { label: 'Pecahan Dari Nol SAMPAI PAHAM', judul: 'Pecahan Dari Nol SAMPAI PAHAM', video: 'brTw7W45flo' },
+        { label: 'Pola Bilangan Matematika Dasar', judul: 'Pola Bilangan Matematika Dasar', video: 'uMS7CSxvoq8' },
         { label: 'Teknik Menghitung Selisih Waktu dan Penjumlahan Waktu', judul: 'Teknik Menghitung Selisih Waktu dan Penjumlahan Waktu', video: 'tcInpmoQ2M0' },
         { label: 'Konversi Waktu: Jam, Menit, Detik', judul: 'Konversi Waktu: Jam, Menit, Detik', video: 'MkTVFNGNKPI' },
         { label: 'Menghitung Kapan Dua Objek Akan Bertemu', judul: 'Menghitung Kapan Dua Objek Akan Bertemu', video: 'iksBWa8_Ft4' },
@@ -2142,7 +2646,8 @@
       const anyOverlayOpen =
         !launchOverlay.classList.contains('hidden') ||
         modalOverlay.classList.contains('active') ||
-        donationOverlay.classList.contains('active');
+        donationOverlay.classList.contains('active') ||
+        banksoalOverlay.classList.contains('active');
       document.body.style.overflow = anyOverlayOpen ? 'hidden' : '';
     }
 
@@ -2188,6 +2693,7 @@
         });
 
         item.append(button, details);
+        if (kelas.bankSoal) attachBankSoalBadge(button, kelas.bankSoal);
         classesContainer.appendChild(item);
       });
     }
@@ -2242,6 +2748,7 @@
         });
 
         chapterItem.append(chapterButton, chapterDetails);
+        if (bab.bankSoal) attachBankSoalBadge(chapterButton, bab.bankSoal);
         container.appendChild(chapterItem);
       });
     }
@@ -2292,6 +2799,7 @@
 
         topicDetails.appendChild(videoHolder);
         topicItem.append(topicButton, topicDetails);
+        if (topic.bankSoal) attachBankSoalBadge(topicButton, topic.bankSoal);
         container.appendChild(topicItem);
       });
     }
@@ -2321,10 +2829,14 @@
       return value;
     }
 
-    function buildYouTubeEmbedHtml(videoId, title) {
+    function buildYouTubeEmbedHtml(videoId, title, ratio) {
+      // ratio contoh: '16 / 9' (default, video horizontal biasa),
+      // '9 / 16' (video vertikal/Shorts), '4 / 3', dst. Kosongkan /
+      // jangan diisi kalau videonya horizontal standar.
+      const ratioStyle = ratio ? ` style="--video-ratio: ${ratio};"` : '';
       return `
         <div class="embed-wrap">
-          <iframe src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1" 
+          <iframe${ratioStyle} src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1" 
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen title="${title}"></iframe>
         </div>
@@ -2346,7 +2858,7 @@
         panel.innerHTML = '';
         return;
       }
-      panel.innerHTML = buildYouTubeEmbedHtml(videoId, topic.judul);
+      panel.innerHTML = buildYouTubeEmbedHtml(videoId, topic.judul, topic.videoRatio);
     }
 
     function renderTopicAccordion(container, topics, videoRenderer) {
@@ -2390,6 +2902,7 @@
 
         topicDetails.appendChild(videoHolder);
         topicItem.append(topicButton, topicDetails);
+        if (topic.bankSoal) attachBankSoalBadge(topicButton, topic.bankSoal);
         container.appendChild(topicItem);
       });
     }
@@ -2460,34 +2973,75 @@
         panel.innerHTML = '';
         return;
       }
-      panel.innerHTML = buildYouTubeEmbedHtml(videoId, topic.judul);
+      panel.innerHTML = buildYouTubeEmbedHtml(videoId, topic.judul, topic.videoRatio);
     }
 
     function showModal(type) {
       modalOverlay.classList.add('active');
       modalOverlay.setAttribute('aria-hidden', 'false');
       refreshBodyScrollLock();
+      // Setiap item sekarang berbentuk { label, link }.
+      // - label: nama menu yang tampil (ganti "Coming Soon" dengan nama aslinya kapan pun siap)
+      // - link : biarkan '' (kosong) supaya tampil sebagai kotak biasa (belum bisa diklik).
+      //          Isi dengan URL (mis. 'https://...') supaya otomatis berubah jadi
+      //          bisa diklik dan terbuka di tab baru — tanpa perlu ubah HTML/CSS apa pun.
       const data = {
         bank: {
           title: 'Bank Soal',
           message: 'Pilihan contoh bank soal untuk latihan lebih banyak.',
-          items: ['Coming Soon', 'Coming Soon', 'Coming Soon', 'Coming Soon']
-        },
-        merch: {
-          title: 'Kertas Kopean',
-          message: 'kertas kopean untuk catatan belajar.',
-          items: ['Coming Soon', 'Coming Soon', 'Coming Soon', 'Coming Soon']
+          items: [
+            { label: 'Coming Soon', link: '' },
+            { label: 'Coming Soon', link: '' },
+            { label: 'Coming Soon', link: '' },
+            { label: 'Coming Soon', link: '' }
+          ]
         },
         tools: {
-          title: 'Alat Bantu Matematik',
+          title: 'Alat Bantu',
           message: 'Alat bantu belajar seperti kalkulator dan grafik interaktif.',
-          items: ['Coming Soon', 'Coming Soon', 'Coming Soon', 'Coming Soon']
+          items: [
+            { label: 'Coming Soon', link: '' },
+            { label: 'Coming Soon', link: '' },
+            { label: 'Coming Soon', link: '' },
+            { label: 'Coming Soon', link: '' }
+          ]
+        },
+        course: {
+          title: 'Course Sekolah',
+          message: 'Course terstruktur per jenjang/kelas untuk belajar lebih mendalam. CATATAN: Jika belum bisa diklik artinya masih dalam pengerjaan.',
+          items: [
+            { label: 'SD AWAL (Kelas 1-3)', link: 'https://www.youtube.com/playlist?list=PLZjhHcBk-hG8' },
+            { label: 'SD AKHIR (Kelas 4-6)', link: 'https://www.youtube.com/playlist?list=PLBhyA_J_fYzw' },
+            { label: 'Kelas 7 | BAB 1: Bilangan Bulat', link: 'https://www.youtube.com/playlist?list=PLN4jAlCO_znI' },
+            { label: 'Kelas 7 | BAB 2: Bilangan Rasional (Pecahan)', link: 'https://www.youtube.com/playlist?list=PLaWYulvKpDX0' },
+            { label: 'Kelas 7 | BAB 3: Rasio', link: 'https://www.youtube.com/playlist?list=PLZxdGIk4YOM0' },
+            { label: 'Kelas 7 | BAB 4: Bentuk Aljabar', link: 'https://www.youtube.com/playlist?list=PLUQxWfgrS_ns' },
+            { label: 'Kelas 7 | BAB 5: Kesebangunan', link: 'https://www.youtube.com/playlist?list=PLIrXmm7dDLPk' },
+            { label: 'Kelas 7 | BAB 6: Data dan Diagram', link: 'https://www.youtube.com/playlist?list=PLCcUHRNW-bX4' },
+            { label: 'Kelas 8 | BAB 1: Bilangan Berpangkat dan Bentuk Akar', link: 'https://www.youtube.com/playlist?list=PLUA3iycv91s-njvyi16ECSzEayAAZxes2' },
+            { label: 'Kelas 8 | BAB 2: Teorema Pythagoras', link: 'https://www.youtube.com/playlist?list=PLUA3iycv91s-7hjnMpR_tFlqNEh_c8wsm' },
+            { label: 'Kelas 8 | BAB 3: Persamaan dan Pertidaksamaan Linear Satu Variabel', link: 'https://www.youtube.com/playlist?list=PLUA3iycv91s8QKJRTSYsMKB4C1uJWYDfy' },
+            { label: 'Kelas 8 | BAB 4: Relasi Fungsi', link: 'https://www.youtube.com/playlist?list=PLUA3iycv91s8AG_vJoGCfEaoUJE4-2MmQ' },
+            { label: 'Kelas 8 | BAB 5: Persamaan Garis Lurus', link: 'https://www.youtube.com/playlist?list=PLUA3iycv91s9FIm7MSQKk7nUrLwKnoJzD' },
+            { label: 'Kelas 8 | BAB 6: Statistika', link: '' },
+            { label: 'Kelas 9 | BAB 1: Sistem Persamaan Linear Dua Variabel', link: '' },
+            { label: 'Kelas 9 | BAB 2: Bangun Ruang', link: '' },
+            { label: 'Kelas 9 | BAB 3: Transformasi Geometri', link: '' },
+            { label: 'Kelas 9 | BAB 4: Peluang dan Pemilihan Sampel', link: '' },
+            { label: 'Selebihnya Coming Soon....', link: '' }
+          ]
         }
       };
       const selected = data[type] || data.bank;
       document.getElementById('modalTitle').textContent = selected.title;
       modalText.textContent = selected.message;
-      modalList.innerHTML = selected.items.map(item => `<div>${item}</div>`).join('');
+      modalList.innerHTML = selected.items.map((item) => {
+        const label = (item && item.label) ? item.label : 'Coming Soon';
+        const link = (item && item.link) ? item.link : '';
+        return link
+          ? `<a href="${link}" target="_blank" rel="noopener noreferrer">${label}</a>`
+          : `<div>${label}</div>`;
+      }).join('');
     }
 
     function closeModal() {
@@ -2555,9 +3109,18 @@
       if (event.key === 'Escape' && donationOverlay.classList.contains('active')) {
         closeDonation();
       }
+      if (event.key === 'Escape' && banksoalOverlay.classList.contains('active')) {
+        closeBankSoal();
+      }
+    });
+
+    banksoalClose.addEventListener('click', closeBankSoal);
+    banksoalOverlay.addEventListener('click', (event) => {
+      if (event.target === banksoalOverlay) closeBankSoal();
     });
 
     setKurikulumLevel(currentLevel);
+    initStaticBankSoalButtons();
     refreshBodyScrollLock();
   </script>
 </body>
