@@ -701,8 +701,12 @@
       border-radius: 999px;
     }
 
-    .modal-list div,
-    .modal-list a {
+    .modal-list-item {
+      position: relative;
+    }
+
+    .modal-list div.modal-list-main,
+    .modal-list a.modal-list-main {
       display: block;
       padding: 1rem 1rem;
       border-radius: 18px;
@@ -719,20 +723,93 @@
     /* Item dengan link (siap diklik) diberi sedikit afordansi visual
        berbeda dari kotak "Coming Soon" biasa, supaya jelas mana yang
        sudah aktif. */
-    .modal-list a {
+    .modal-list a.modal-list-main {
       border-color: rgba(29,78,216,0.25);
       cursor: pointer;
     }
 
-    .modal-list a:active {
+    .modal-list a.modal-list-main:active {
       transform: scale(0.98);
     }
 
     @media (hover: hover) and (pointer: fine) {
-      .modal-list a:hover {
+      .modal-list a.modal-list-main:hover {
         transform: translateY(-2px);
         background: #eef2ff;
         border-color: var(--primary);
+      }
+    }
+
+    /* ============================================================
+       ===== Badge "FREE" kecil di pojok kanan-atas tiap baris
+       daftar Bank Soal (juga otomatis jalan untuk daftar Alat Bantu
+       / Course kalau suatu saat diberi properti `free`).
+       Cara pakai: lihat komentar di dekat variabel `data` pada
+       fungsi showModal() — tinggal tambah `free: 'link...'` di
+       item yang diinginkan, badge ini otomatis muncul.
+       Border-radius sengaja disamakan (18px) dengan button besarnya
+       (.modal-list-main) supaya "tumpul"-nya senada, bukan pil bulat
+       penuh. ============================================================ */
+    /* Diberi ke .modal-list-main saat itemnya punya badge FREE, supaya
+       teks label tidak tertutup badge yang kini berada di tengah
+       (vertically centered) sisi kanan. */
+    .modal-list-main.has-free-badge {
+      padding-right: 4.2rem;
+    }
+
+    @media (max-width: 480px) {
+      .modal-list-main.has-free-badge {
+        padding-right: 3.6rem;
+      }
+    }
+
+    .modal-list-free-badge {
+      position: absolute;
+      top: 50%;
+      right: 0.75rem;
+      transform: translateY(-50%);
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.28rem 0.7rem;
+      border-radius: 18px;
+      background: var(--accent);
+      border: 1px solid rgba(255,255,255,0.6);
+      color: #ffffff;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.65rem;
+      letter-spacing: 0.03em;
+      line-height: 1;
+      white-space: nowrap;
+      text-decoration: none;
+      cursor: pointer;
+      touch-action: manipulation;
+      box-shadow: 0 4px 10px rgba(15,23,42,0.18);
+      transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    /* transform diberi !important supaya posisi tengah vertikal
+       (translateY(-50%)) tidak "tertimpa" oleh transform lain saat
+       hover/active. */
+    .modal-list-free-badge:active {
+      transform: translateY(-50%) scale(0.96) !important;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .modal-list-free-badge:hover {
+        background: #16a34a;
+        box-shadow: 0 6px 14px rgba(15,23,42,0.24);
+        transform: translateY(-50%) translateY(-1px) !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .modal-list-free-badge {
+        right: 0.55rem;
+        padding: 0.22rem 0.55rem;
+        font-size: 0.58rem;
       }
     }
 
@@ -2986,11 +3063,22 @@
       //          Isi dengan URL (mis. 'https://...') supaya otomatis berubah jadi
       //          bisa diklik dan terbuka di tab baru — tanpa perlu ubah HTML/CSS apa pun.
       const data = {
+        // ------------------------------------------------------------
+        // ===== Cara menambah badge "FREE" di item Bank Soal lain =====
+        // Setiap item boleh diberi properti tambahan `free` (isi link
+        // versi gratisnya). Kalau properti ini diisi, badge kecil
+        // "FREE" otomatis muncul di pojok kanan-atas item tersebut dan
+        // langsung mengarah ke link itu (tab baru) — tidak perlu ubah
+        // HTML/CSS apa pun lagi.
+        //   { label: 'Kelas 7 | BAB 2: ...', link: 'linkPremium', free: 'linkGratis' }
+        // Kalau `free` dikosongkan/dihapus, badge otomatis tidak
+        // tampil (jadi aman dipakai juga untuk item "Coming Soon").
+        // ------------------------------------------------------------
         bank: {
           title: 'Bank Soal',
-          message: 'Pilihan contoh bank soal untuk latihan lebih banyak.',
+          message: 'Pilihan contoh bank soal premium untuk latihan lebih banyak. Tekan FREE untuk versi gratisnya (jika tersedia).',
           items: [
-            { label: 'Kelas 7 | BAB 1: Bilangan Bulat', link: 'http://lynk.id/alammatematik/rwxgz8rx8vxe' },
+            { label: 'Kelas 7 | BAB 1: Bilangan Bulat', link: 'http://lynk.id/alammatematik/rwxgz8rx8vxe', free: 'http://lynk.id/alammatematik/gx0ko5j299w3' },
             { label: 'Coming Soon', link: '' },
             { label: 'Coming Soon', link: '' },
             { label: 'Coming Soon', link: '' }
@@ -3038,9 +3126,18 @@
       modalList.innerHTML = selected.items.map((item) => {
         const label = (item && item.label) ? item.label : 'Coming Soon';
         const link = (item && item.link) ? item.link : '';
-        return link
-          ? `<a href="${link}" target="_blank" rel="noopener noreferrer">${label}</a>`
-          : `<div>${label}</div>`;
+        const freeLink = (item && item.free) ? item.free : '';
+
+        const mainClass = freeLink ? 'modal-list-main has-free-badge' : 'modal-list-main';
+        const mainEl = link
+          ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="${mainClass}">${label}</a>`
+          : `<div class="${mainClass}">${label}</div>`;
+
+        const freeBadge = freeLink
+          ? `<a href="${freeLink}" target="_blank" rel="noopener noreferrer" class="modal-list-free-badge" aria-label="${label} — versi gratis">FREE</a>`
+          : '';
+
+        return `<div class="modal-list-item">${mainEl}${freeBadge}</div>`;
       }).join('');
     }
 
