@@ -77,6 +77,7 @@
       color: #104862;
       text-decoration: underline;
       font-weight: 700;
+      font-size: 0.85rem;
     }
 
     .topic-video .empty {
@@ -862,19 +863,21 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.3rem 0.65rem;
-      border-radius: 999px;
-      background: #f8fafc;
-      border: 1.5px solid rgba(29,78,216,0.35);
-      color: var(--primary);
+      padding: 0.28rem 0.7rem;
+      border-radius: 18px;
+      background: var(--primary);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: #ffffff;
       font-family: 'Teachers', sans-serif;
       font-weight: 700;
       font-size: 0.7rem;
+      letter-spacing: 0.03em;
       line-height: 1;
       white-space: nowrap;
       cursor: pointer;
       touch-action: manipulation;
-      transition: box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 2px 6px rgba(15,23,42,0.16);
+      transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
     }
 
     /* Catatan: transform di bawah ini sengaja diberi !important.
@@ -888,16 +891,13 @@
        bawah. !important memastikan posisi tengah badge selalu
        terjaga di semua state. */
     .banksoal-anchor .banksoal-badge:active {
-      transform: translateY(-50%) scale(0.94) !important;
+      transform: translateY(-50%) scale(0.96) !important;
     }
 
     @media (hover: hover) and (pointer: fine) {
       .banksoal-anchor .banksoal-badge:hover {
-        background: #eff6ff;
-        border-color: var(--primary);
-        /* Tanpa glow — hanya outline yang menebal sedikit (subtle),
-           dibuat lewat box-shadow tipis tanpa blur (bukan efek sinar). */
-        box-shadow: 0 0 0 1px rgba(29,78,216,0.55);
+        background: #2f5fe0;
+        box-shadow: 0 4px 10px rgba(15,23,42,0.22);
         /* Terangkat sedikit saja ke ATAS (subtle). */
         transform: translateY(-50%) translateY(-1px) !important;
       }
@@ -924,12 +924,12 @@
       .banksoal-anchor .banksoal-badge {
         top: 50%;
         right: 6px;
-        padding: 0.24rem 0.5rem;
+        padding: 0.22rem 0.55rem;
         font-size: 0.62rem;
       }
 
       .banksoal-anchor .banksoal-badge:active {
-        transform: translateY(-50%) scale(0.94) !important;
+        transform: translateY(-50%) scale(0.96) !important;
       }
     }
 
@@ -1453,7 +1453,7 @@
       }
 
       .brand .logo {
-        width: 38px;
+        width: 100px;
       }
 
       .topnav {
@@ -1619,6 +1619,10 @@
         margin-top: 0.65rem;
       }
 
+      .video-fallback a {
+        font-size: 0.68rem;
+      }
+
       .embed-wrap iframe {
         border-radius: 12px;
       }
@@ -1680,7 +1684,7 @@
     /* Penyesuaian tambahan untuk layar hp yang sangat sempit (mis. <380px). */
     @media (max-width: 380px) {
       .brand .logo {
-        width: 34px;
+        width: 80px;
       }
 
       .topnav button {
@@ -3076,7 +3080,7 @@
         // ------------------------------------------------------------
         bank: {
           title: 'Bank Soal',
-          message: 'Pilihan contoh bank soal premium untuk latihan lebih banyak. Tekan FREE untuk versi gratisnya (jika tersedia).',
+          message: 'Bank soal premium untuk latihan teratur. Tekan FREE untuk versi gratisnya (jika tersedia).',
           items: [
             { label: 'Kelas 7 | BAB 1: Bilangan Bulat', link: 'http://lynk.id/alammatematik/rwxgz8rx8vxe', free: 'http://lynk.id/alammatematik/gx0ko5j299w3' },
             { label: 'Coming Soon', link: '' },
@@ -3116,7 +3120,8 @@
             { label: 'Kelas 9 | BAB 2: Bangun Ruang', link: '' },
             { label: 'Kelas 9 | BAB 3: Transformasi Geometri', link: '' },
             { label: 'Kelas 9 | BAB 4: Peluang dan Pemilihan Sampel', link: '' },
-            { label: 'Selebihnya Coming Soon....', link: '' }
+            { label: 'Selebihnya Coming Soon....', link: '' },
+            { label: 'Kita Bangun Dulu Fondasi Keilmuannya :)', link: '' }
           ]
         }
       };
