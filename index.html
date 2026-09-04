@@ -3747,8 +3747,19 @@
     searchOverlay.addEventListener('click', (event) => {
       if (event.target === searchOverlay) closeSearch();
     });
+    // Pada mobile, setiap awal typing (termasuk huruf pertama),
+    // kembalikan daftar hasil pencarian ke posisi paling atas.
+    // Ini mencegah pengguna harus scroll ke atas dulu hanya untuk
+    // melihat field pencarian dan hasil teratas, sementara daftar
+    // tetap bisa di-scroll ke bawah secara normal untuk memilih materi.
+    function resetMobileSearchResultsScroll() {
+      if (!window.matchMedia('(max-width: 640px)').matches) return;
+      searchResults.scrollTop = 0;
+    }
+
     searchInput.addEventListener('input', () => {
       renderSearchResults(searchInput.value);
+      resetMobileSearchResultsScroll();
     });
     searchInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
