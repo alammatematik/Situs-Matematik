@@ -708,7 +708,12 @@
 
     .search-modal {
       width: min(600px, 100%);
-      max-height: calc(100vh - 3rem);
+      /* --search-vvh diisi lewat JS dari window.visualViewport.height saat
+         keyboard mobile muncul, supaya modal tidak lagi mengacu ke 100vh
+         yang tidak ikut menyusut ketika keyboard menutupi sebagian layar
+         (khususnya di Safari iOS). Fallback 100vh dipakai saat JS/visualViewport
+         tidak tersedia (desktop atau browser lama). */
+      max-height: calc(var(--search-vvh, 100vh) - 3rem);
       padding: 1.15rem 1.25rem 1.2rem;
       border-radius: 28px;
       background: white;
@@ -719,7 +724,7 @@
       flex-direction: column;
       overflow: hidden;
       box-sizing: border-box;
-      transition: width 0.22s ease, max-height 0.22s ease;
+      transition: width 0.22s ease, max-height 0.15s ease;
     }
 
     .search-modal.has-results {
@@ -1745,7 +1750,7 @@
       .search-modal,
       .search-modal.has-results {
         width: 100%;
-        max-height: calc(100vh - 1.4rem);
+        max-height: calc(var(--search-vvh, 100vh) - 1.4rem);
         border-radius: 22px;
         padding: 1rem 0.9rem 0.9rem;
       }
@@ -3601,6 +3606,47 @@
       return haystack.includes(query);
     }
 
+    // ---------- Adaptasi search-overlay terhadap keyboard mobile ----------
+    // Masalah: di iPhone (Safari), unit 100vh TIDAK ikut menyusut ketika
+    // keyboard muncul, dan Safari kadang otomatis men-scroll halaman untuk
+    // membawa input yang sedang fokus ke area terlihat. Karena search-overlay
+    // memakai position:fixed, kombinasi keduanya membuat modal jadi salah
+    // posisi/terpotong: bagian input pencarian di atas sulit terlihat dan
+    // daftar hasil ikut tertutup keyboard.
+    //
+    // Solusinya: pakai window.visualViewport (area yang BENAR-BENAR terlihat,
+    // sudah dikurangi keyboard) untuk menyetel ulang tinggi & posisi overlay,
+    // serta variabel CSS --search-vvh yang dipakai .search-modal untuk
+    // menghitung max-height-nya. Dengan begitu, field ketikan tetap terlihat
+    // di atas dan daftar hasil menyesuaikan tinggi (scroll sendiri) tanpa
+    // ada bagian yang terpotong oleh keyboard.
+    function applySearchViewportFix() {
+      if (!searchOverlay.classList.contains('active')) return;
+      const vv = window.visualViewport;
+      if (!vv) return;
+      document.documentElement.style.setProperty('--search-vvh', `${vv.height}px`);
+      searchOverlay.style.height = `${vv.height}px`;
+      searchOverlay.style.top = `${vv.offsetTop}px`;
+      // Jika Safari sempat men-scroll halaman saat keyboard muncul,
+      // kembalikan ke posisi semula supaya overlay tetap sinkron.
+      if (window.scrollX !== 0 || window.scrollY !== 0) {
+        window.scrollTo(0, 0);
+      }
+    }
+
+    function resetSearchViewportFix() {
+      document.documentElement.style.removeProperty('--search-vvh');
+      searchOverlay.style.height = '';
+      searchOverlay.style.top = '';
+    }
+
+    if (window.visualViewport) {
+      // resize: terpicu saat keyboard muncul/hilang atau berubah tinggi.
+      // scroll: terpicu saat Safari menggeser visual viewport (mis. auto-scroll ke input fokus).
+      window.visualViewport.addEventListener('resize', applySearchViewportFix);
+      window.visualViewport.addEventListener('scroll', applySearchViewportFix);
+    }
+
     function openSearch() {
       closeLaunch();
       closeModal();
@@ -3608,15 +3654,22 @@
       searchOverlay.classList.add('active');
       searchOverlay.setAttribute('aria-hidden', 'false');
       refreshBodyScrollLock();
+      applySearchViewportFix();
       searchInput.focus();
       searchInput.select();
       renderSearchResults(searchInput.value);
+      // Animasi kemunculan keyboard di iOS berjalan async setelah focus(),
+      // jadi sinkronkan ulang beberapa saat kemudian agar ukuran modal
+      // benar-benar mengikuti tinggi akhir setelah keyboard selesai muncul.
+      setTimeout(applySearchViewportFix, 50);
+      setTimeout(applySearchViewportFix, 320);
     }
 
     function closeSearch() {
       searchOverlay.classList.remove('active');
       searchOverlay.setAttribute('aria-hidden', 'true');
       refreshBodyScrollLock();
+      resetSearchViewportFix();
     }
 
     function renderSearchResults(rawQuery) {
@@ -3760,6 +3813,11 @@
     searchInput.addEventListener('input', () => {
       renderSearchResults(searchInput.value);
       resetMobileSearchResultsScroll();
+      applySearchViewportFix();
+    });
+    searchInput.addEventListener('focus', () => {
+      applySearchViewportFix();
+      setTimeout(applySearchViewportFix, 320);
     });
     searchInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
