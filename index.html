@@ -134,14 +134,65 @@
       left: 0;
       right: 0;
       z-index: 100;
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
       align-items: center;
       gap: 1rem;
       padding: 1rem 1.5rem;
       background: rgba(255,255,255,0.95);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(15,23,42,0.08);
+    }
+
+    .search-trigger {
+      justify-self: center;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      width: min(420px, 100%);
+      margin: 0;
+      padding: 0.62rem 1.15rem;
+      border: 2px solid #222;
+      border-radius: 999px;
+      background: #fff;
+      color: #9ca3af;
+      font-family: inherit;
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.2;
+      text-align: left;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .search-trigger img,
+    .search-trigger .search-icon-fallback {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      object-fit: contain;
+      opacity: 0.72;
+    }
+
+    .search-trigger .search-icon-fallback {
+      display: none;
+    }
+
+    .search-trigger img[hidden] + .search-icon-fallback {
+      display: block;
+    }
+
+    .search-trigger span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .search-trigger:active {
+      transform: scale(0.98);
+      background: #fff8c9;
     }
 
     .topnav {
@@ -283,10 +334,11 @@
 
     section p.lead {
       color: var(--muted);
-      max-width: 800px;
+      width: 100%;
+      max-width: none;
       line-height: 1.8;
-      margin-top: 0;
-      margin-bottom: 1.5rem;
+      margin: 0 0 1.5rem;
+      text-align: left;
     }
 
     .level-nav {
@@ -396,6 +448,13 @@
     .nested-list button {
       border-radius: 16px;
       padding-left: 1rem;
+    }
+
+    /* Target Search menggunakan patokan yang sama dengan judul section:
+       120px agar tombol tidak tertutup topbar sticky. */
+    .item-list button,
+    .nested-list button {
+      scroll-margin-top: 120px;
     }
 
     .item-list button {
@@ -630,6 +689,181 @@
 
     .modal-overlay.active {
       display: flex;
+    }
+
+    .search-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 170;
+      padding: 1.5rem;
+    }
+
+    .search-overlay.active {
+      display: flex;
+    }
+
+    .search-modal {
+      width: min(600px, 100%);
+      max-height: calc(100vh - 3rem);
+      padding: 1.15rem 1.25rem 1.2rem;
+      border-radius: 28px;
+      background: white;
+      box-shadow: var(--shadow);
+      position: relative;
+      color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-sizing: border-box;
+      transition: width 0.22s ease, max-height 0.22s ease;
+    }
+
+    .search-modal.has-results {
+      width: min(620px, 100%);
+    }
+
+    .search-close {
+      position: absolute;
+      right: 0.85rem;
+      top: 0.75rem;
+      border: none;
+      background: transparent;
+      font-size: 1.3rem;
+      color: var(--muted);
+      cursor: pointer;
+      z-index: 1;
+      line-height: 1;
+    }
+
+    .search-field {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.15rem 2rem 0.7rem 0.1rem;
+      border-bottom: 1px solid rgba(15,23,42,0.12);
+      flex-shrink: 0;
+    }
+
+    .search-field img,
+    .search-field .search-icon-fallback {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      object-fit: contain;
+      opacity: 0.7;
+    }
+
+    .search-field .search-icon-fallback {
+      display: none;
+    }
+
+    .search-field img[hidden] + .search-icon-fallback {
+      display: block;
+    }
+
+    .search-field input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 400;
+      color: #0f172a;
+    }
+
+    .search-field input::placeholder {
+      color: #9ca3af;
+    }
+
+    .search-results {
+      display: none;
+      gap: 0.7rem;
+      margin-top: 0.85rem;
+      padding-right: 0.35rem;
+      overflow-y: auto;
+      min-height: 0;
+      scrollbar-width: thin;
+    }
+
+    .search-modal.has-results .search-results {
+      display: grid;
+    }
+
+    .search-results::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .search-results::-webkit-scrollbar-thumb {
+      background: rgba(15,23,42,0.18);
+      border-radius: 999px;
+    }
+
+    .search-result {
+      display: block;
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: 1px solid rgba(15,23,42,0.06);
+      border-radius: 18px;
+      background: #f8fafc;
+      color: inherit;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .search-result.is-active,
+    .search-result:active {
+      transform: scale(0.98);
+      background: #eef2ff;
+      border-color: var(--primary);
+    }
+
+    .search-result-title {
+      display: block;
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: #0f172a;
+      line-height: 1.35;
+    }
+
+    .search-result-title strong {
+      font-weight: 700;
+    }
+
+    .search-result-path {
+      display: block;
+      margin-top: 0.28rem;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .search-empty {
+      padding: 0.85rem 0.2rem 0.2rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .search-meta {
+      display: none;
+      margin: 0.75rem 0 0;
+      text-align: right;
+      color: var(--muted);
+      font-size: 0.78rem;
+      flex-shrink: 0;
+    }
+
+    .search-modal.has-results .search-meta {
+      display: block;
     }
 
     .modal {
@@ -1376,6 +1610,18 @@
         border-color: #222;
       }
 
+      .search-trigger:hover {
+        transform: translateY(-2px);
+        background: #ffff00;
+        border-color: #222;
+      }
+
+      .search-result:hover {
+        transform: translateY(-2px);
+        background: #eef2ff;
+        border-color: var(--primary);
+      }
+
       .hero-card button:hover {
         filter: brightness(1.05);
       }
@@ -1449,11 +1695,27 @@
          pada .topbar. Kecil tidak masalah asal tetap bisa ditekan. ---------- */
       .topbar {
         padding: 0.5rem 0.6rem;
-        gap: 0.5rem;
+        gap: 0.4rem;
+        grid-template-columns: auto minmax(0, 1fr) auto;
       }
 
       .brand .logo {
         width: 100px;
+      }
+
+      .search-trigger {
+        width: 100%;
+        max-width: 180px;
+        padding: 0.32rem 0.55rem;
+        gap: 0.4rem;
+        font-size: 0.62rem;
+        border-width: 1.5px;
+      }
+
+      .search-trigger img,
+      .search-trigger .search-icon-fallback {
+        width: 13px;
+        height: 13px;
       }
 
       .topnav {
@@ -1474,6 +1736,26 @@
         border-width: 1.5px;
         white-space: normal;
         word-break: break-word;
+      }
+
+      .search-overlay {
+        padding: 0.7rem;
+      }
+
+      .search-modal,
+      .search-modal.has-results {
+        width: 100%;
+        max-height: calc(100vh - 1.4rem);
+        border-radius: 22px;
+        padding: 1rem 0.9rem 0.9rem;
+      }
+
+      .search-result-title {
+        font-size: 0.88rem;
+      }
+
+      .search-result-path {
+        font-size: 0.7rem;
       }
 
       /* ---------- Modal "Pilih Jalur Belajar": kompak,
@@ -1687,6 +1969,12 @@
         width: 80px;
       }
 
+      .search-trigger {
+        max-width: 120px;
+        padding: 0.3rem 0.4rem;
+        font-size: 0.52rem;
+      }
+
       .topnav button {
         font-size: 0.56rem;
         padding: 0.35rem 0.25rem;
@@ -1705,6 +1993,14 @@
     <header class="topbar">
       <button class="brand" aria-label="Segarkan halaman" onclick="window.location.reload();">
         <span class="logo"><img src="images/Logo Left Corner.png" alt="Alam Matematik"></span>
+      </button>
+      <button type="button" class="search-trigger" id="searchTrigger" aria-label="Cari materi">
+        <img src="images/magnifier.png" alt="" onerror="this.hidden=true">
+        <svg class="search-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5"/>
+          <path d="M16 16l5 5"/>
+        </svg>
+        <span>Cari materi....</span>
       </button>
       <nav class="topnav" aria-label="Navigasi utama">
         <button type="button" data-modal="course">Course Sekolah</button>
@@ -1893,6 +2189,22 @@
     </div>
   </div>
 
+  <div class="search-overlay" id="searchOverlay" aria-hidden="true">
+    <div class="search-modal" id="searchModal" role="dialog" aria-modal="true" aria-labelledby="searchInput">
+      <button class="search-close" id="searchClose" type="button" aria-label="Tutup pencarian">×</button>
+      <div class="search-field">
+        <img src="images/magnifier.png" alt="" onerror="this.hidden=true">
+        <svg class="search-icon-fallback" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5"/>
+          <path d="M16 16l5 5"/>
+        </svg>
+        <input id="searchInput" type="text" autocomplete="off" spellcheck="false" placeholder="Mau belajar materi apa?" aria-label="Mau belajar materi apa?">
+      </div>
+      <div class="search-results" id="searchResults"></div>
+      <p class="search-meta" id="searchMeta"></p>
+    </div>
+  </div>
+
   <!-- Modal "Bank Soal": satu modal dipakai ulang untuk SEMUA badge Bank
        Soal di halaman ini. Isinya (link Gratis & Premium) diganti lewat
        JavaScript setiap kali sebuah badge Bank Soal diklik. -->
@@ -1934,6 +2246,15 @@
     const modalOverlay = document.getElementById('modalOverlay');
     const modalText = document.getElementById('modalText');
     const modalList = document.getElementById('modalList');
+    const searchOverlay = document.getElementById('searchOverlay');
+    const searchModal = document.getElementById('searchModal');
+    const searchTrigger = document.getElementById('searchTrigger');
+    const searchClose = document.getElementById('searchClose');
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const searchMeta = document.getElementById('searchMeta');
+    let searchHits = [];
+    let searchActiveIndex = 0;
 
     const banksoalOverlay = document.getElementById('banksoalOverlay');
     const banksoalClose = document.getElementById('banksoalClose');
@@ -2702,16 +3023,35 @@
     let currentLevel = 'sd';
     let currentClassId = null;
     let currentChapterId = null;
+    // Bernilai true hanya saat navigasi berasal dari hasil Search.
+    // Dipakai agar klik programatis pada topik tidak menjalankan scroll
+    // bawaan 'center', karena setelahnya Search akan mengatur posisi sendiri.
+    let isSearchNavigation = false;
 
     function openSection(id) {
       closeLaunch();
       if (id === 'kurikulum') {
         setKurikulumLevel('sd');
       }
+      scrollToSection(id);
+    }
+
+    function scrollToSection(id) {
       const target = document.getElementById(id);
       if (!target) return;
       requestAnimationFrame(() => {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    // Scroll khusus hasil Search: tombol/topik diposisikan seperti judul
+    // section (#kurikulum/#umum/#test), yaitu mulai dari titik 'start'
+    // dengan ruang 120px untuk topbar sticky. Dengan begitu tombol tetap
+    // terbaca dan embed YouTube yang dibukanya berada tepat di bawahnya.
+    function scrollToSearchTopic(button) {
+      if (!button) return;
+      requestAnimationFrame(() => {
+        button.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
 
@@ -2728,7 +3068,8 @@
         !launchOverlay.classList.contains('hidden') ||
         modalOverlay.classList.contains('active') ||
         donationOverlay.classList.contains('active') ||
-        banksoalOverlay.classList.contains('active');
+        banksoalOverlay.classList.contains('active') ||
+        searchOverlay.classList.contains('active');
       document.body.style.overflow = anyOverlayOpen ? 'hidden' : '';
     }
 
@@ -2771,6 +3112,9 @@
           details.classList.remove('hidden');
           renderKurikulumChapters(kelas, details);
           renderKurikulumVideo('Pilih topik untuk menampilkan video.');
+          if (!isSearchNavigation) {
+            scrollToSearchTopic(button);
+          }
         });
 
         item.append(button, details);
@@ -2826,6 +3170,9 @@
           chapterDetails.classList.remove('hidden');
           renderKurikulumTopics(bab, chapterDetails);
           renderKurikulumVideo('Pilih topik untuk menampilkan video.');
+          if (!isSearchNavigation) {
+            scrollToSearchTopic(chapterButton);
+          }
         });
 
         chapterItem.append(chapterButton, chapterDetails);
@@ -2875,7 +3222,9 @@
           topicButton.classList.add('active');
           topicDetails.classList.remove('hidden');
           renderKurikulumVideo(topic, videoHolder);
-          topicButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if (!isSearchNavigation) {
+            scrollToSearchTopic(topicButton);
+          }
         });
 
         topicDetails.appendChild(videoHolder);
@@ -2978,7 +3327,9 @@
           topicDetails.classList.remove('hidden');
 
           videoRenderer(topic, videoHolder);
-          topicButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if (!isSearchNavigation) {
+            scrollToSearchTopic(topicButton);
+          }
         });
 
         topicDetails.appendChild(videoHolder);
@@ -3152,8 +3503,270 @@
       refreshBodyScrollLock();
     }
 
+    function isPlaceholderTopic(topic) {
+      const label = (topic && topic.label ? topic.label : '').trim().toLowerCase();
+      return !label || label === 'coming soon';
+    }
+
+    function collectSearchIndex() {
+      const items = [];
+
+      Object.entries(KURIKULUM_DATA).forEach(([levelKey, levelData]) => {
+        (levelData.classes || []).forEach((kelas) => {
+          if (Array.isArray(kelas.topics)) {
+            kelas.topics.forEach((topic) => {
+              if (isPlaceholderTopic(topic)) return;
+              items.push({
+                title: topic.label,
+                path: ['Kurikulum Sekolah', levelData.label, kelas.label].filter(Boolean).join(' / '),
+                source: 'kurikulum',
+                level: levelKey,
+                classId: kelas.id,
+                chapterId: null,
+                topic
+              });
+            });
+          }
+          (kelas.chapters || []).forEach((bab) => {
+            (bab.topics || []).forEach((topic) => {
+              if (isPlaceholderTopic(topic)) return;
+              items.push({
+                title: topic.label,
+                path: ['Kurikulum Sekolah', levelData.label, kelas.label, bab.title].filter(Boolean).join(' / '),
+                source: 'kurikulum',
+                level: levelKey,
+                classId: kelas.id,
+                chapterId: bab.id,
+                topic
+              });
+            });
+          });
+        });
+      });
+
+      Object.entries(UMUM_DATA).forEach(([categoryKey, category]) => {
+        (category.topics || []).forEach((topic) => {
+          if (isPlaceholderTopic(topic)) return;
+          items.push({
+            title: topic.label,
+            path: ['Umum', category.title].filter(Boolean).join(' / '),
+            source: 'umum',
+            category: categoryKey,
+            topic
+          });
+        });
+      });
+
+      (TEST_DATA.topics || []).forEach((topic) => {
+        if (isPlaceholderTopic(topic)) return;
+        items.push({
+          title: topic.label,
+          path: TEST_DATA.title || 'Tes Tulis',
+          source: 'test',
+          topic
+        });
+      });
+
+      return items;
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function highlightQuery(text, query) {
+      const source = String(text || '');
+      const needle = query.trim();
+      if (!needle) return escapeHtml(source);
+      const escapedNeedle = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const matcher = new RegExp(escapedNeedle, 'gi');
+      let result = '';
+      let lastIndex = 0;
+      let match;
+      while ((match = matcher.exec(source)) !== null) {
+        result += escapeHtml(source.slice(lastIndex, match.index));
+        result += `<strong>${escapeHtml(match[0])}</strong>`;
+        lastIndex = match.index + match[0].length;
+      }
+      result += escapeHtml(source.slice(lastIndex));
+      return result;
+    }
+
+    function matchSearchItem(item, query) {
+      const haystack = `${item.title} ${item.topic && item.topic.judul ? item.topic.judul : ''}`.toLowerCase();
+      return haystack.includes(query);
+    }
+
+    function openSearch() {
+      closeLaunch();
+      closeModal();
+      closeBankSoal();
+      searchOverlay.classList.add('active');
+      searchOverlay.setAttribute('aria-hidden', 'false');
+      refreshBodyScrollLock();
+      searchInput.focus();
+      searchInput.select();
+      renderSearchResults(searchInput.value);
+    }
+
+    function closeSearch() {
+      searchOverlay.classList.remove('active');
+      searchOverlay.setAttribute('aria-hidden', 'true');
+      refreshBodyScrollLock();
+    }
+
+    function renderSearchResults(rawQuery) {
+      const query = (rawQuery || '').trim();
+      searchHits = [];
+      searchActiveIndex = 0;
+
+      if (!query) {
+        searchModal.classList.remove('has-results');
+        searchResults.innerHTML = '';
+        searchMeta.textContent = '';
+        return;
+      }
+
+      const lowered = query.toLowerCase();
+      searchHits = collectSearchIndex()
+        .filter((item) => matchSearchItem(item, lowered))
+        .sort((a, b) => {
+          const aPos = a.title.toLowerCase().indexOf(lowered);
+          const bPos = b.title.toLowerCase().indexOf(lowered);
+          if (aPos !== bPos) {
+            if (aPos < 0) return 1;
+            if (bPos < 0) return -1;
+            return aPos - bPos;
+          }
+          return a.title.localeCompare(b.title, 'id') || a.path.localeCompare(b.path, 'id');
+        });
+
+      searchModal.classList.add('has-results');
+      const total = searchHits.length;
+      searchMeta.textContent = `Menampilkan ${total} dari ${total} hasil pencarian`;
+
+      if (!total) {
+        searchResults.innerHTML = '<div class="search-empty">Tidak ada materi yang cocok dengan pencarian ini.</div>';
+        return;
+      }
+
+      searchResults.innerHTML = searchHits.map((item, index) => `
+        <button type="button" class="search-result${index === 0 ? ' is-active' : ''}" data-search-index="${index}">
+          <span class="search-result-title">${highlightQuery(item.title, query)}</span>
+          <span class="search-result-path">${escapeHtml(item.path)}</span>
+        </button>
+      `).join('');
+    }
+
+    function setSearchActiveIndex(nextIndex) {
+      if (!searchHits.length) return;
+      searchActiveIndex = (nextIndex + searchHits.length) % searchHits.length;
+      const buttons = searchResults.querySelectorAll('.search-result');
+      buttons.forEach((btn, index) => {
+        btn.classList.toggle('is-active', index === searchActiveIndex);
+      });
+      const active = buttons[searchActiveIndex];
+      if (active) active.scrollIntoView({ block: 'nearest' });
+    }
+
+    function findTopicButton(container, topic) {
+      return Array.from(container.querySelectorAll('button')).find((btn) => (
+        btn.dataset.video === topic.video && btn.textContent.trim() === topic.label
+      ));
+    }
+
+    function openSearchHit(hit) {
+      if (!hit) return;
+      closeSearch();
+      closeLaunch();
+
+      // Saat membuka hasil Search, klik programatis hanya dipakai untuk
+      // menyiapkan struktur/menampilkan embed. Scroll akhirnya selalu
+      // diarahkan ke BUTTON TOPIK tersebut, bukan ke judul section.
+      isSearchNavigation = true;
+
+      try {
+        if (hit.source === 'kurikulum') {
+          setKurikulumLevel(hit.level);
+          const classButton = classesContainer.querySelector(`[data-class-id="${hit.classId}"]`);
+          if (classButton) classButton.click();
+          if (hit.chapterId) {
+            const chapterButton = classesContainer.querySelector(`[data-chapter-id="${hit.chapterId}"]`);
+            if (chapterButton) chapterButton.click();
+          }
+          const topicButton = findTopicButton(classesContainer, hit.topic);
+          if (topicButton) topicButton.click();
+          if (topicButton) {
+            // Pastikan target siap dirender sebelum scroll dijalankan.
+            requestAnimationFrame(() => scrollToSearchTopic(topicButton));
+          }
+          return;
+        }
+
+        if (hit.source === 'umum') {
+          const categoryButton = Array.from(categoryButtons).find((btn) => btn.dataset.category === hit.category);
+          if (categoryButton && currentUmumCategory !== hit.category) {
+            categoryButton.click();
+          }
+          const topicButton = findTopicButton(umumTopicsContainer, hit.topic);
+          if (topicButton) topicButton.click();
+          if (topicButton) {
+            requestAnimationFrame(() => scrollToSearchTopic(topicButton));
+          }
+          return;
+        }
+
+        if (testTopicsGroup.hidden) toggleTestTopics();
+        const topicButton = findTopicButton(testTopicsContainer, hit.topic);
+        if (topicButton) topicButton.click();
+        if (topicButton) {
+          requestAnimationFrame(() => scrollToSearchTopic(topicButton));
+        }
+      } finally {
+        // Event listener klik berjalan sinkron, sehingga flag bisa langsung
+        // dikembalikan setelah struktur topik selesai dibuka.
+        isSearchNavigation = false;
+      }
+    }
+
+    function chooseTopSearchResult() {
+      if (!searchHits.length) return;
+      openSearchHit(searchHits[searchActiveIndex] || searchHits[0]);
+    }
+
     modalOverlay.addEventListener('click', (event) => {
       if (event.target === modalOverlay) closeModal();
+    });
+
+    searchTrigger.addEventListener('click', openSearch);
+    searchClose.addEventListener('click', closeSearch);
+    searchOverlay.addEventListener('click', (event) => {
+      if (event.target === searchOverlay) closeSearch();
+    });
+    searchInput.addEventListener('input', () => {
+      renderSearchResults(searchInput.value);
+    });
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        chooseTopSearchResult();
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        setSearchActiveIndex(searchActiveIndex + 1);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        setSearchActiveIndex(searchActiveIndex - 1);
+      }
+    });
+    searchResults.addEventListener('click', (event) => {
+      const button = event.target.closest('.search-result');
+      if (!button) return;
+      const index = Number(button.dataset.searchIndex);
+      openSearchHit(searchHits[index]);
     });
 
     levelButtons.forEach((button) => {
@@ -3182,7 +3795,9 @@
       });
     });
 
-    testToggle.addEventListener('click', toggleTestTopics);
+    testToggle.addEventListener('click', () => {
+      toggleTestTopics();
+    });
     const donationButton = Array.from(document.querySelectorAll('.footer-actions button')).find((button) => button.textContent.trim() === 'Bantu Berkembang');
     const donationOverlay = document.getElementById('donationOverlay');
     const donationClose = document.getElementById('donationClose');
@@ -3213,6 +3828,9 @@
       }
       if (event.key === 'Escape' && banksoalOverlay.classList.contains('active')) {
         closeBankSoal();
+      }
+      if (event.key === 'Escape' && searchOverlay.classList.contains('active')) {
+        closeSearch();
       }
     });
 
