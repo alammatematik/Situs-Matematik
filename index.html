@@ -25,19 +25,18 @@
       min-height: 100%;
       margin: 0;
       padding: 0;
-      /* Safari iPhone menampilkan background root saat halaman di-rubber-band
-         mentok atas/bawah. Karena itu root dibuat seperti dua lapis warna:
-         bagian atas viewport = warna topbar, bagian bawah viewport = biru situs.
-         background-attachment: fixed membuat warna yang terlihat saat overscroll
-         mengikuti posisi layar, bukan panjang konten halaman. */
-      background: linear-gradient(
-        to bottom,
-        #F3F6F7 0%,
-        #F3F6F7 50%,
-        var(--bg) 50%,
-        var(--bg) 100%
-      );
-      background-attachment: fixed;
+      /* Warna dasar root sengaja dibuat sama dengan topbar. Ini adalah warna
+         yang Safari iPhone lihat ketika halaman di-rubber-band pada sisi ATAS. */
+      background: #F3F6F7;
+    }
+
+    /* Safari iOS tidak selalu mempertahankan posisi gradient pada background
+       root ketika rubber-band/overscroll. Karena itu warna sisi BAWAH tidak lagi
+       ditentukan dengan gradient, tetapi diganti secara dinamis lewat JS tepat
+       ketika halaman sudah mencapai ujung bawah. Isi halaman menutupi root ini,
+       jadi pergantian warna tidak terlihat selama scroll normal. */
+    html.overscroll-at-bottom {
+      background: var(--bg);
     }
 
     body {
@@ -3995,6 +3994,52 @@
     banksoalOverlay.addEventListener('click', (event) => {
       if (event.target === banksoalOverlay) closeBankSoal();
     });
+
+    /* ============================================================
+       SAFARI iPHONE: warna rubber-band berbeda untuk atas dan bawah.
+
+       Safari memakai background elemen root (<html>) untuk area kosong yang
+       terlihat ketika pengguna menarik halaman melewati batas scroll. Satu
+       background statis tidak dapat menjamin warna berbeda di dua ujung pada
+       Safari iOS, jadi kita mengganti class root berdasarkan posisi scroll:
+       - selama bukan di ujung bawah -> #F3F6F7 (aman untuk overscroll atas)
+       - tepat di ujung bawah       -> #104862 (aman untuk overscroll bawah)
+
+       Pergantian ini tidak mengubah warna konten situs karena .page-background
+       tetap menutupi root. Yang berubah hanya lapisan paling belakang yang
+       biasanya baru terlihat saat efek rubber-band Safari muncul.
+       ============================================================ */
+    const overscrollRoot = document.documentElement;
+    let overscrollBackgroundFrame = 0;
+
+    function syncSafariOverscrollBackground() {
+      overscrollBackgroundFrame = 0;
+
+      const scrollElement = document.scrollingElement || document.documentElement;
+      const scrollTop = Math.max(0, window.scrollY || scrollElement.scrollTop || 0);
+      const maxScrollTop = Math.max(0, scrollElement.scrollHeight - scrollElement.clientHeight);
+
+      /* Toleransi beberapa pixel diperlukan karena Safari dapat berhenti pada
+         nilai sub-pixel / membulatkan tinggi viewport ketika toolbar berubah. */
+      const atBottom = maxScrollTop <= 1 || (maxScrollTop - scrollTop) <= 6;
+      overscrollRoot.classList.toggle('overscroll-at-bottom', atBottom);
+    }
+
+    function scheduleSafariOverscrollBackgroundSync() {
+      if (overscrollBackgroundFrame) return;
+      overscrollBackgroundFrame = requestAnimationFrame(syncSafariOverscrollBackground);
+    }
+
+    window.addEventListener('scroll', scheduleSafariOverscrollBackgroundSync, { passive: true });
+    window.addEventListener('resize', scheduleSafariOverscrollBackgroundSync, { passive: true });
+    window.addEventListener('orientationchange', scheduleSafariOverscrollBackgroundSync, { passive: true });
+    window.addEventListener('pageshow', scheduleSafariOverscrollBackgroundSync, { passive: true });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', scheduleSafariOverscrollBackgroundSync, { passive: true });
+    }
+
+    syncSafariOverscrollBackground();
 
     setKurikulumLevel(currentLevel);
     initStaticBankSoalButtons();
