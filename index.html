@@ -684,7 +684,16 @@
       align-items: center;
       justify-content: center;
       z-index: 160;
-      padding: 1.5rem;
+      padding: 1rem;
+      box-sizing: border-box;
+      /*
+         Di iPhone/Safari, tinggi layout viewport (100vh) bisa lebih besar
+         daripada area yang benar-benar sedang terlihat. Untuk modal Course
+         yang panjang, kondisi itu membuat modal terpusat terlalu tinggi
+         sehingga bagian judul/deskripsi keluar dari layar. JS mengisi
+         --modal-vvh dari visualViewport.height saat modal dibuka.
+      */
+      height: 100dvh;
     }
 
     .modal-overlay.active {
@@ -873,7 +882,14 @@
 
     .modal {
       width: min(620px, 100%);
-      max-height: calc(100vh - 3rem);
+      /*
+         Gunakan tinggi visual viewport bila tersedia. Fallback 100dvh
+         menjaga perilaku normal di browser yang tidak menjalankan JS.
+         Dengan ini modal panjang tetap berada UTUH di area layar yang
+         benar-benar terlihat, sementara .modal-list tetap menjadi satu-
+         satunya area yang melakukan scroll.
+      */
+      max-height: calc(var(--modal-vvh, 100dvh) - 2rem);
       padding: 1.75rem;
       border-radius: 28px;
       background: white;
@@ -1798,6 +1814,31 @@
       .launch-header p {
         font-size: 0.72rem;
         line-height: 1.4;
+      }
+
+      /* ---------- Topnav modal (Bank Soal / Alat Bantu / Course) ----------
+         Header dan deskripsi selalu dipertahankan; daftar panjang yang
+         melebihi tinggi layar saja yang boleh melakukan scroll. ---------- */
+      .modal-overlay {
+        padding: 0.7rem;
+        height: 100dvh;
+      }
+
+      .modal {
+        width: 100%;
+        max-height: calc(var(--modal-vvh, 100dvh) - 1.4rem);
+        padding: 1rem 0.9rem 0.9rem;
+        border-radius: 22px;
+      }
+
+      .modal h3 {
+        font-size: 1.15rem;
+        line-height: 1.25;
+      }
+
+      .modal p {
+        font-size: 0.78rem;
+        line-height: 1.5;
       }
 
       .launch-grid {
@@ -3413,10 +3454,37 @@
       panel.innerHTML = buildYouTubeEmbedHtml(videoId, topic.judul, topic.videoRatio);
     }
 
+    // ---------- Adaptasi modal Course/Bank/Tools terhadap viewport mobile ----------
+    // Sama seperti Search, modal topnav juga harus mengikuti area yang benar-
+    // benar terlihat pada Safari/iPhone. Ini terutama penting saat jumlah item
+    // banyak sehingga .modal menyentuh batas max-height.
+    function applyModalViewportFix() {
+      if (!modalOverlay.classList.contains('active')) return;
+      const vv = window.visualViewport;
+      if (!vv) return;
+
+      const viewportHeight = vv.height;
+      document.documentElement.style.setProperty('--modal-vvh', `${viewportHeight}px`);
+      modalOverlay.style.height = `${viewportHeight}px`;
+      modalOverlay.style.top = `${vv.offsetTop}px`;
+    }
+
+    function resetModalViewportFix() {
+      document.documentElement.style.removeProperty('--modal-vvh');
+      modalOverlay.style.height = '';
+      modalOverlay.style.top = '';
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', applyModalViewportFix);
+      window.visualViewport.addEventListener('scroll', applyModalViewportFix);
+    }
+
     function showModal(type) {
       modalOverlay.classList.add('active');
       modalOverlay.setAttribute('aria-hidden', 'false');
       refreshBodyScrollLock();
+      applyModalViewportFix();
       // Setiap item sekarang berbentuk { label, link }.
       // - label: nama menu yang tampil (ganti "Coming Soon" dengan nama aslinya kapan pun siap)
       // - link : biarkan '' (kosong) supaya tampil sebagai kotak biasa (belum bisa diklik).
@@ -3506,6 +3574,7 @@
       modalOverlay.classList.remove('active');
       modalOverlay.setAttribute('aria-hidden', 'true');
       refreshBodyScrollLock();
+      resetModalViewportFix();
     }
 
     function isPlaceholderTopic(topic) {
