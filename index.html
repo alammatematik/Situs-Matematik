@@ -21,12 +21,30 @@
       font-family: 'Teachers', sans-serif;
     }
 
-    html,
+    html {
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
+      /* Safari iPhone menampilkan background root saat halaman di-rubber-band
+         mentok atas/bawah. Karena itu root dibuat seperti dua lapis warna:
+         bagian atas viewport = warna topbar, bagian bawah viewport = biru situs.
+         background-attachment: fixed membuat warna yang terlihat saat overscroll
+         mengikuti posisi layar, bukan panjang konten halaman. */
+      background: linear-gradient(
+        to bottom,
+        #F3F6F7 0%,
+        #F3F6F7 50%,
+        var(--bg) 50%,
+        var(--bg) 100%
+      );
+      background-attachment: fixed;
+    }
+
     body {
       min-height: 100%;
       margin: 0;
       padding: 0;
-      background: #F3F6F7;
+      background: transparent;
       color: #ffffff;
     }
 
