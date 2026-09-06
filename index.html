@@ -8,10 +8,10 @@
   <link rel="icon" type="image/png" href="images/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Teachers:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Teachers:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #104862;
+      --bg: #012B2E;
       --surface: #ffffff;
       --primary: #1d4ed8;
       --secondary: #0f172a;
@@ -25,18 +25,19 @@
       min-height: 100%;
       margin: 0;
       padding: 0;
-      /* Warna dasar root sengaja dibuat sama dengan topbar. Ini adalah warna
-         yang Safari iPhone lihat ketika halaman di-rubber-band pada sisi ATAS. */
-      background: #F3F6F7;
-    }
-
-    /* Safari iOS tidak selalu mempertahankan posisi gradient pada background
-       root ketika rubber-band/overscroll. Karena itu warna sisi BAWAH tidak lagi
-       ditentukan dengan gradient, tetapi diganti secara dinamis lewat JS tepat
-       ketika halaman sudah mencapai ujung bawah. Isi halaman menutupi root ini,
-       jadi pergantian warna tidak terlihat selama scroll normal. */
-    html.overscroll-at-bottom {
-      background: var(--bg);
+      /* Safari iPhone menampilkan background root saat halaman di-rubber-band
+         mentok atas/bawah. Karena itu root dibuat seperti dua lapis warna:
+         bagian atas viewport = warna topbar, bagian bawah viewport = biru situs.
+         background-attachment: fixed membuat warna yang terlihat saat overscroll
+         mengikuti posisi layar, bukan panjang konten halaman. */
+      background: linear-gradient(
+        to bottom,
+        #F3F6F7 0%,
+        #F3F6F7 50%,
+        var(--bg) 50%,
+        var(--bg) 100%
+      );
+      background-attachment: fixed;
     }
 
     body {
@@ -239,10 +240,53 @@
       background: #fff8c9;
     }
 
+    .cpns-shorts-trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      min-height: 42px;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid rgba(16,72,98,0.18);
+      border-radius: 14px;
+      background: #ffffff;
+      color: #104862;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      touch-action: manipulation;
+      box-shadow: 0 4px 12px rgba(15,23,42,0.07);
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .cpns-shorts-trigger svg {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 auto;
+    }
+
+    .cpns-shorts-trigger:active {
+      transform: scale(0.96);
+    }
+
     .page-background {
       min-height: 100vh;
       padding: 0 0 1rem;
-      background: var(--bg);
+      /* Latar hijau-teal yang tenang dengan grid matematis halus.
+         Sorotan cyan dan kuning sengaja dibuat redup agar kartu materi tetap
+         menjadi pusat perhatian. */
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 88% 12%, rgba(34, 211, 238, 0.18) 0, transparent 25rem),
+        radial-gradient(circle at 8% 50%, rgba(255, 255, 0, 0.07) 0, transparent 19rem),
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(135deg, #075a5d 0%, #012b2e 52%, #001f22 100%);
+      background-size: auto, auto, 42px 42px, 42px 42px, auto;
+      background-attachment: fixed;
     }
 
     .hero {
@@ -325,6 +369,130 @@
       padding: 0 1rem;
     }
 
+    /* Subheader tambahan: sengaja tidak sticky agar ikut menghilang ketika
+       halaman digulir. Grid penuh membuat item tengah selalu tepat di 50vw. */
+    .secondary-header {
+      position: relative;
+      z-index: 20;
+      width: 100%;
+      min-height: 58px;
+      display: flex;
+      align-items: stretch;
+      background: #F5F7F7;
+    }
+
+    .secondary-nav {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: stretch;
+    }
+
+    .secondary-nav-item {
+      position: relative;
+      min-width: 0;
+      min-height: 58px;
+      padding: 0.45rem 0.5rem 0.75rem;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: #104862;
+      font: inherit;
+      font-size: 0.96rem;
+      font-weight: 600;
+      line-height: 1.15;
+      text-align: center;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .secondary-nav-label {
+      display: block;
+      white-space: nowrap;
+      transform: scale(1);
+      transform-origin: center;
+      transition: transform 0.18s ease, font-weight 0.18s ease;
+    }
+
+    .secondary-nav-item::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 9px;
+      width: clamp(28px, 3.2vw, 44px);
+      height: 3px;
+      border-radius: 999px;
+      background: #104862;
+      opacity: 0;
+      transform: translateX(-50%) translateY(3px) scaleX(0);
+      transition: transform 0.18s ease, opacity 0.18s ease;
+      pointer-events: none;
+    }
+
+    .secondary-nav-item:focus-visible {
+      outline: 2px solid rgba(16, 72, 98, 0.5);
+      outline-offset: -5px;
+    }
+
+    .secondary-nav-item:focus-visible .secondary-nav-label,
+    .secondary-nav-item:active .secondary-nav-label {
+      font-weight: 700;
+      transform: scale(1.055);
+    }
+
+    .secondary-nav-item:focus-visible::after,
+    .secondary-nav-item:active::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scaleX(1);
+    }
+
+    .secondary-nav-item.attention-forward::after {
+      animation: secondary-underline-forward 0.4s cubic-bezier(0.22, 0.78, 0.28, 1) both;
+    }
+
+    .secondary-nav-item.attention-reverse::after {
+      animation: secondary-underline-reverse 0.4s cubic-bezier(0.22, 0.78, 0.28, 1) both;
+    }
+
+    @keyframes secondary-underline-forward {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(3px) scaleX(0);
+        transform-origin: left center;
+      }
+      28%, 70% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scaleX(1);
+        transform-origin: left center;
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(2px) scaleX(0);
+        transform-origin: right center;
+      }
+    }
+
+    @keyframes secondary-underline-reverse {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(3px) scaleX(0);
+        transform-origin: right center;
+      }
+      28%, 70% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scaleX(1);
+        transform-origin: right center;
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(2px) scaleX(0);
+        transform-origin: left center;
+      }
+    }
+
     section {
       margin-top: 2.5rem;
       padding: 2rem 2rem;
@@ -347,6 +515,7 @@
       margin-top: 0;
       margin-bottom: 0.65rem;
       font-size: 4rem;
+      font-weight: 800;
       color: var(--secondary);
     }
 
@@ -379,8 +548,8 @@
     }
 
     .level-nav button.active {
-      background: var(--primary);
-      color: white;
+      background: #104862;
+      color: #ffffff;
       border-color: transparent;
     }
 
@@ -436,15 +605,15 @@
       border-bottom: 1px solid rgba(29,78,216,0.12);
       background: white;
       color: var(--secondary);
-      font-weight: 700;
+      font-weight: 600;
       border-radius: 0;
       touch-action: manipulation;
       transition: background 0.2s ease, transform 0.2s ease;
     }
 
     .accordion-item button.active {
-      background: rgba(29,78,216,0.12);
-      color: var(--primary);
+      background: #104862;
+      color: #ffffff;
     }
 
     .accordion-item button:active {
@@ -483,12 +652,13 @@
       border: 1px solid rgba(29,78,216,0.18);
       background: white;
       color: var(--secondary);
+      font-weight: 600;
       transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
     }
 
     .item-list button.active {
-      background: var(--primary);
-      color: white;
+      background: #104862;
+      color: #ffffff;
       border-color: transparent;
     }
 
@@ -536,14 +706,14 @@
       border: 1px solid rgba(29,78,216,0.18);
       background: white;
       font-size: 1.05rem;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--secondary);
       transition: transform 0.2s ease, background 0.2s ease;
     }
 
     .category-list button.active {
-      background: var(--primary);
-      color: white;
+      background: #104862;
+      color: #ffffff;
       border-color: transparent;
     }
 
@@ -572,9 +742,15 @@
       transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
     }
 
+    /* Hirarki navigasi Kurikulum: pilih jenjang/kelas lebih dulu (bold),
+       lalu BAB dan topik memakai semi-bold agar mata langsung tahu urutannya. */
+    #kurikulum-classes > .accordion-item > button {
+      font-weight: 700;
+    }
+
     .test-nav button.active {
-      background: var(--primary);
-      color: white;
+      background: #104862;
+      color: #ffffff;
       border-color: transparent;
     }
 
@@ -716,6 +892,139 @@
 
     .modal-overlay.active {
       display: flex;
+    }
+
+    .cpns-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: rgba(0,31,34,0.68);
+      z-index: 180;
+    }
+
+    .cpns-overlay.active {
+      display: flex;
+    }
+
+    .cpns-panel {
+      position: relative;
+      width: min(320px, 100%);
+      max-height: calc(100dvh - 2rem);
+      overflow: auto;
+      padding: 1rem;
+      border: 0;
+      border-radius: 0;
+      outline: 0;
+      background: #ffffff;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.18);
+      color: #0f172a;
+    }
+
+    .cpns-panel h3 {
+      margin: 0 2.5rem 0.25rem 0;
+      color: #104862;
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .cpns-panel p {
+      margin: 0 0 0.85rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .cpns-close {
+      position: absolute;
+      top: 0.72rem;
+      right: 0.78rem;
+      width: auto;
+      height: auto;
+      padding: 0.15rem 0.25rem;
+      border: 0;
+      border-radius: 0;
+      outline: 0;
+      background: transparent;
+      color: #104862;
+      font-family: Arial, sans-serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .cpns-close:focus-visible {
+      outline: 2px solid rgba(16,72,98,0.45);
+      outline-offset: 3px;
+    }
+
+    .cpns-video-frame,
+    .cpns-watch-link {
+      width: min(100%, 260px);
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cpns-video-frame {
+      margin: 0 auto;
+      aspect-ratio: 9 / 16;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      background: linear-gradient(160deg, #104862, #012b2e);
+    }
+
+    .cpns-video-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .cpns-placeholder {
+      padding: 1.5rem;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .cpns-placeholder svg {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 0.7rem;
+    }
+
+    .cpns-placeholder strong,
+    .cpns-placeholder span {
+      display: block;
+    }
+
+    .cpns-placeholder strong {
+      font-size: 1.05rem;
+    }
+
+    .cpns-placeholder span {
+      margin-top: 0.35rem;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      opacity: 0.82;
+    }
+
+    .cpns-watch-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0.85rem auto 0;
+      padding: 0.8rem 1rem;
+      border-radius: 14px;
+      background: #104862;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-sizing: border-box;
     }
 
     .search-overlay {
@@ -1403,7 +1712,17 @@
 
     /* ===== Footer ===== */
     .footer-wave {
-      background: var(--bg);
+      /* Sama persis dengan latar utama. Attachment fixed menjaga grid dan
+         gradasinya tersambung saat berganti dari body ke area footer. */
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 88% 12%, rgba(34, 211, 238, 0.18) 0, transparent 25rem),
+        radial-gradient(circle at 8% 50%, rgba(255, 255, 0, 0.07) 0, transparent 19rem),
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(135deg, #075a5d 0%, #012b2e 52%, #001f22 100%);
+      background-size: auto, auto, 42px 42px, 42px 42px, auto;
+      background-attachment: fixed;
       line-height: 0;
     }
 
@@ -1616,7 +1935,15 @@
     }
 
     .footer-copyright {
-      background: var(--bg);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 88% 12%, rgba(34, 211, 238, 0.18) 0, transparent 25rem),
+        radial-gradient(circle at 8% 50%, rgba(255, 255, 0, 0.07) 0, transparent 19rem),
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(135deg, #075a5d 0%, #012b2e 52%, #001f22 100%);
+      background-size: auto, auto, 42px 42px, 42px 42px, auto;
+      background-attachment: fixed;
       padding: 1.25rem 1.5rem;
       text-align: center;
     }
@@ -1640,6 +1967,22 @@
     @media (hover: hover) and (pointer: fine) {
       .video-fallback a:hover {
         color: #bfdbfe;
+      }
+
+      .cpns-shorts-trigger:hover {
+        transform: translateY(-2px);
+        background: #eef8f7;
+        box-shadow: 0 7px 16px rgba(15,23,42,0.12);
+      }
+
+      .secondary-nav-item:hover .secondary-nav-label {
+        font-weight: 700;
+        transform: scale(1.055);
+      }
+
+      .secondary-nav-item:hover::after {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scaleX(1);
       }
 
       .topnav button:hover {
@@ -1685,8 +2028,13 @@
         background: #eff6ff;
       }
 
+      .level-nav button.active:hover,
+      .accordion-item button.active:hover,
+      .item-list button.active:hover,
+      .category-list button.active:hover,
       .test-nav button.active:hover {
-        background: var(--primary);
+        background: #104862;
+        color: #ffffff;
       }
 
       .launch-card button:hover {
@@ -1757,6 +2105,22 @@
         height: 13px;
       }
 
+      .cpns-shorts-trigger {
+        width: 36px;
+        min-height: 36px;
+        padding: 0;
+        border-radius: 12px;
+      }
+
+      .cpns-shorts-trigger span {
+        display: none;
+      }
+
+      .cpns-shorts-trigger svg {
+        width: 19px;
+        height: 19px;
+      }
+
       .topnav {
         flex: 0 1 auto;
         flex-wrap: nowrap;
@@ -1775,6 +2139,46 @@
         border-width: 1.5px;
         white-space: normal;
         word-break: break-word;
+      }
+
+      .secondary-header,
+      .secondary-nav-item {
+        min-height: 48px;
+      }
+
+      .secondary-nav-item {
+        padding: 0.35rem 0.15rem 0.62rem;
+        font-size: clamp(0.7rem, 3vw, 0.82rem);
+      }
+
+      .secondary-nav-item::after {
+        bottom: 7px;
+        width: clamp(24px, 8vw, 34px);
+        height: 2.5px;
+      }
+
+      .cpns-overlay {
+        padding: 0.7rem;
+      }
+
+      .cpns-panel {
+        width: min(300px, 100%);
+        max-height: calc(100dvh - 1.4rem);
+        padding: 0.85rem;
+        border-radius: 0;
+      }
+
+      .cpns-panel h3 {
+        font-size: 1.05rem;
+      }
+
+      .cpns-panel p {
+        font-size: 0.8rem;
+      }
+
+      .cpns-video-frame,
+      .cpns-watch-link {
+        width: min(100%, 220px);
       }
 
       .search-overlay {
@@ -1908,7 +2312,9 @@
       }
 
       section h2 {
-        font-size: 1.55rem;
+        font-size: 1.7rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
       }
 
       section p.lead {
@@ -1929,10 +2335,20 @@
         gap: 0.4rem;
       }
 
-      .level-nav button,
+      .level-nav button {
+        padding: 0.5rem 0.3rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: -0.012em;
+        line-height: 1.2;
+        border-radius: 12px;
+        white-space: normal;
+      }
+
       .category-list button {
         padding: 0.5rem 0.3rem;
-        font-size: 0.62rem;
+        font-size: 0.6rem;
+        font-weight: 600;
         line-height: 1.2;
         border-radius: 12px;
         white-space: normal;
@@ -1955,8 +2371,14 @@
       .accordion-item button,
       .item-list button {
         padding: 0.7rem 0.65rem;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
+        font-weight: 600;
         border-radius: 14px;
+      }
+
+      #kurikulum-classes > .accordion-item > button {
+        font-size: 0.9rem;
+        font-weight: 700;
       }
 
       .topic-video {
@@ -2003,6 +2425,43 @@
       }
     }
 
+    /* Landscape rendah (laptop kecil, tablet, atau ponsel diputar):
+       preview Shorts diperkecil berdasarkan tinggi viewport agar modal
+       tidak tampak ter-zoom dan tetap utuh di layar. */
+    @media (orientation: landscape) and (max-height: 640px) {
+      .cpns-overlay {
+        padding: 0.5rem;
+      }
+
+      .cpns-panel {
+        width: min(520px, 100%);
+        max-height: calc(100dvh - 1rem);
+        padding: 0.7rem 0.85rem;
+        border-radius: 0;
+      }
+
+      .cpns-panel h3 {
+        margin-bottom: 0.15rem;
+        font-size: 1rem;
+      }
+
+      .cpns-panel p {
+        margin-bottom: 0.45rem;
+        font-size: 0.76rem;
+      }
+
+      .cpns-video-frame,
+      .cpns-watch-link {
+        width: clamp(110px, 27vh, 160px);
+      }
+
+      .cpns-watch-link {
+        margin-top: 0.5rem;
+        padding: 0.58rem 0.8rem;
+        font-size: 0.78rem;
+      }
+    }
+
     /* ============================================================
        Animasi halus saat sebuah panel/accordion baru saja dibuka
        (kelas -> bab -> topik di Kurikulum, panel topik di Umum,
@@ -2044,9 +2503,13 @@
         padding: 0.35rem 0.25rem;
       }
 
-      .level-nav button,
+      .level-nav button {
+        font-size: 0.63rem;
+        padding: 0.45rem 0.25rem;
+      }
+
       .category-list button {
-        font-size: 0.58rem;
+        font-size: 0.55rem;
         padding: 0.45rem 0.25rem;
       }
     }
@@ -2066,13 +2529,28 @@
         </svg>
         <span>Cari materi....</span>
       </button>
-      <nav class="topnav" aria-label="Navigasi utama">
-        <button type="button" data-modal="course">Course Sekolah</button>
-        <button type="button" data-modal="bank">Bank Soal</button>
-        <button type="button" data-modal="tools">Alat Bantu</button>
-      </nav>
+      <button type="button" class="cpns-shorts-trigger" id="cpnsShortsTrigger" aria-label="Buka Shorts Soal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="4"></rect>
+          <path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"></path>
+        </svg>
+        <span>Shorts Soal</span>
+      </button>
     </header>
 
+    <header class="secondary-header" id="secondaryHeader">
+      <nav class="secondary-nav" aria-label="Pilihan tambahan">
+        <button type="button" class="secondary-nav-item" data-modal="course">
+          <span class="secondary-nav-label">Course Sekolah</span>
+        </button>
+        <button type="button" class="secondary-nav-item" data-modal="bank">
+          <span class="secondary-nav-label">Bank Soal</span>
+        </button>
+        <button type="button" class="secondary-nav-item" data-modal="tools">
+          <span class="secondary-nav-label">Alat Bantu</span>
+        </button>
+      </nav>
+    </header>
 
     <main>
       <section id="kurikulum">
@@ -2253,6 +2731,26 @@
     </div>
   </div>
 
+  <div class="cpns-overlay" id="cpnsOverlay" aria-hidden="true">
+    <div class="cpns-panel" role="dialog" aria-modal="true" aria-labelledby="cpnsTitle">
+      <button type="button" class="cpns-close" id="cpnsClose" aria-label="Tutup Shorts Soal">X</button>
+      <h3 id="cpnsTitle">Shorts Soal</h3>
+      <p>Kumpulan video pendek vertikal untuk berlatih tes soal level umum. Cocok untuk CPNS, UTBK, SNBT, Kedinasan, calon TNI/Polri, dll.</p>
+      <div class="cpns-video-frame" id="cpnsVideoFrame">
+        <div class="cpns-placeholder" id="cpnsPlaceholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="4"></rect>
+            <path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"></path>
+          </svg>
+          <strong>Playlist Shorts Soal</strong>
+          <span>Tambahkan tautan playlist Anda pada konfigurasi di bawah script untuk menampilkan preview YouTube di sini.</span>
+        </div>
+        <iframe id="cpnsPlaylistEmbed" title="Playlist Shorts Soal" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen hidden></iframe>
+      </div>
+      <a class="cpns-watch-link" id="cpnsWatchLink" href="#" target="_blank" rel="noopener noreferrer" hidden>Tonton di YouTube</a>
+    </div>
+  </div>
+
   <div class="search-overlay" id="searchOverlay" aria-hidden="true">
     <div class="search-modal" id="searchModal" role="dialog" aria-modal="true" aria-labelledby="searchInput">
       <button class="search-close" id="searchClose" type="button" aria-label="Tutup pencarian">×</button>
@@ -2296,6 +2794,8 @@
   <script>
     const launchOverlay = document.getElementById('launchOverlay');
     const topButtons = document.querySelectorAll('[data-modal]');
+    const secondaryHeader = document.getElementById('secondaryHeader');
+    const secondaryNavItems = Array.from(document.querySelectorAll('.secondary-nav-item'));
     const levelButtons = document.querySelectorAll('.level-nav button');
     const categoryButtons = document.querySelectorAll('#umum .category-list button');
     const classesContainer = document.getElementById('kurikulum-classes');
@@ -2319,6 +2819,134 @@
     const searchMeta = document.getElementById('searchMeta');
     let searchHits = [];
     let searchActiveIndex = 0;
+
+    // ===== Animasi harmonis pada subheader =====
+    // Satu sapuan kiri -> kanan, lalu kembali kanan -> kiri. Animasi tidak
+    // di-loop; ia baru dimainkan lagi setelah subheader sempat hilang penuh
+    // dan kemudian kembali terlihat di bawah topbar.
+    const secondaryAttentionSequence = [
+      { index: 0, direction: 'forward' },
+      { index: 1, direction: 'forward' },
+      { index: 2, direction: 'forward' },
+      { index: 1, direction: 'reverse' },
+      { index: 0, direction: 'reverse' }
+    ];
+    let secondaryAttentionTimers = [];
+    let secondaryAttentionRunning = false;
+    let secondaryAttentionReplayQueued = false;
+    let secondaryHeaderHasExited = false;
+    let secondaryHeaderObserver = null;
+
+    function isSecondaryHeaderFullyVisible() {
+      if (!secondaryHeader) return false;
+      const stickyTopbar = document.querySelector('.topbar');
+      const headerRect = secondaryHeader.getBoundingClientRect();
+      const topbarBottom = stickyTopbar ? stickyTopbar.getBoundingClientRect().bottom : 0;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+      return headerRect.top >= topbarBottom - 2 && headerRect.bottom <= viewportHeight + 2;
+    }
+
+    function clearSecondaryAttentionClasses() {
+      secondaryNavItems.forEach((item) => {
+        item.classList.remove('attention-forward', 'attention-reverse');
+      });
+    }
+
+    function cancelSecondaryAttention() {
+      secondaryAttentionTimers.forEach((timer) => window.clearTimeout(timer));
+      secondaryAttentionTimers = [];
+      secondaryAttentionRunning = false;
+      secondaryAttentionReplayQueued = false;
+      clearSecondaryAttentionClasses();
+    }
+
+    function playSecondaryAttention() {
+      if (!secondaryHeader || !secondaryNavItems.length) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      secondaryAttentionTimers.forEach((timer) => window.clearTimeout(timer));
+      secondaryAttentionTimers = [];
+      clearSecondaryAttentionClasses();
+      secondaryAttentionRunning = true;
+
+      const stepDuration = 420;
+      secondaryAttentionSequence.forEach((step, position) => {
+        const timer = window.setTimeout(() => {
+          clearSecondaryAttentionClasses();
+          const item = secondaryNavItems[step.index];
+          if (item) item.classList.add(`attention-${step.direction}`);
+        }, position * stepDuration);
+        secondaryAttentionTimers.push(timer);
+      });
+
+      const finishTimer = window.setTimeout(() => {
+        clearSecondaryAttentionClasses();
+        secondaryAttentionTimers = [];
+        secondaryAttentionRunning = false;
+
+        if (secondaryAttentionReplayQueued) {
+          secondaryAttentionReplayQueued = false;
+          playSecondaryAttention();
+        }
+      }, secondaryAttentionSequence.length * stepDuration);
+      secondaryAttentionTimers.push(finishTimer);
+    }
+
+    function createSecondaryHeaderObserver() {
+      if (!secondaryHeader || !('IntersectionObserver' in window)) return;
+      if (secondaryHeaderObserver) secondaryHeaderObserver.disconnect();
+
+      const stickyTopbar = document.querySelector('.topbar');
+      const stickyHeight = stickyTopbar ? Math.round(stickyTopbar.getBoundingClientRect().height) : 0;
+      secondaryHeaderObserver = new IntersectionObserver((entries) => {
+        const entry = entries[0];
+
+        if (!entry.isIntersecting || entry.intersectionRatio <= 0.05) {
+          secondaryHeaderHasExited = true;
+          return;
+        }
+
+        if (
+          secondaryHeaderHasExited &&
+          entry.intersectionRatio >= 0.82 &&
+          launchOverlay.classList.contains('hidden')
+        ) {
+          secondaryHeaderHasExited = false;
+          if (secondaryAttentionRunning) {
+            secondaryAttentionReplayQueued = true;
+          } else {
+            playSecondaryAttention();
+          }
+        }
+      }, {
+        root: null,
+        rootMargin: `-${stickyHeight}px 0px 0px 0px`,
+        threshold: [0, 0.05, 0.82, 1]
+      });
+
+      secondaryHeaderObserver.observe(secondaryHeader);
+    }
+
+    secondaryNavItems.forEach((item) => {
+      item.addEventListener('pointerenter', cancelSecondaryAttention);
+      item.addEventListener('focusin', cancelSecondaryAttention);
+    });
+
+    createSecondaryHeaderObserver();
+    window.addEventListener('resize', createSecondaryHeaderObserver, { passive: true });
+
+    // ============================================================
+    // TEMPEL LINK PLAYLIST CPNS SHORTS ANDA DI BARIS BERIKUT.
+    // Contoh: 'https://www.youtube.com/playlist?list=PLxxxxxxxxxxxx'
+    // ============================================================
+    const CPNS_SHORTS_PLAYLIST_URL = 'https://www.youtube.com/playlist?list=PLDoqi7mlqYiA';
+    const cpnsShortsTrigger = document.getElementById('cpnsShortsTrigger');
+    const cpnsOverlay = document.getElementById('cpnsOverlay');
+    const cpnsClose = document.getElementById('cpnsClose');
+    const cpnsPlaylistEmbed = document.getElementById('cpnsPlaylistEmbed');
+    const cpnsPlaceholder = document.getElementById('cpnsPlaceholder');
+    const cpnsWatchLink = document.getElementById('cpnsWatchLink');
 
     const banksoalOverlay = document.getElementById('banksoalOverlay');
     const banksoalClose = document.getElementById('banksoalClose');
@@ -3120,8 +3748,21 @@
     }
 
     function closeLaunch() {
+      const wasOpen = !launchOverlay.classList.contains('hidden');
       launchOverlay.classList.add('hidden');
       refreshBodyScrollLock();
+
+      // Animasi awal baru boleh dimulai setelah panel "Pilih jalur belajar"
+      // benar-benar ditutup dan subheader terlihat penuh di bawah topbar.
+      // `wasOpen` mencegah pemanggilan closeLaunch() berikutnya mengulanginya.
+      if (wasOpen) {
+        window.requestAnimationFrame(() => {
+          if (isSecondaryHeaderFullyVisible()) {
+            secondaryHeaderHasExited = false;
+            playSecondaryAttention();
+          }
+        });
+      }
     }
 
     // Mengunci scroll body kapanpun salah satu overlay (pilih jalur belajar,
@@ -3131,6 +3772,7 @@
       const anyOverlayOpen =
         !launchOverlay.classList.contains('hidden') ||
         modalOverlay.classList.contains('active') ||
+        cpnsOverlay.classList.contains('active') ||
         donationOverlay.classList.contains('active') ||
         banksoalOverlay.classList.contains('active') ||
         searchOverlay.classList.contains('active');
@@ -3595,6 +4237,47 @@
       resetModalViewportFix();
     }
 
+    function getYouTubePlaylistId(url) {
+      if (!url) return '';
+      try {
+        return new URL(url).searchParams.get('list') || '';
+      } catch (error) {
+        return '';
+      }
+    }
+
+    function openCpnsShorts() {
+      closeLaunch();
+      closeModal();
+      closeSearch();
+      closeBankSoal();
+
+      const playlistId = getYouTubePlaylistId(CPNS_SHORTS_PLAYLIST_URL);
+      const hasPlaylist = Boolean(playlistId);
+      cpnsPlaceholder.hidden = hasPlaylist;
+      cpnsPlaylistEmbed.hidden = !hasPlaylist;
+      cpnsWatchLink.hidden = !hasPlaylist;
+
+      if (hasPlaylist) {
+        cpnsPlaylistEmbed.src = `https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(playlistId)}&rel=0`;
+        cpnsWatchLink.href = CPNS_SHORTS_PLAYLIST_URL;
+      } else {
+        cpnsPlaylistEmbed.removeAttribute('src');
+        cpnsWatchLink.removeAttribute('href');
+      }
+
+      cpnsOverlay.classList.add('active');
+      cpnsOverlay.setAttribute('aria-hidden', 'false');
+      refreshBodyScrollLock();
+    }
+
+    function closeCpnsShorts() {
+      cpnsOverlay.classList.remove('active');
+      cpnsOverlay.setAttribute('aria-hidden', 'true');
+      cpnsPlaylistEmbed.removeAttribute('src');
+      refreshBodyScrollLock();
+    }
+
     function isPlaceholderTopic(topic) {
       const label = (topic && topic.label ? topic.label : '').trim().toLowerCase();
       return !label || label === 'coming soon';
@@ -3882,6 +4565,12 @@
       if (event.target === modalOverlay) closeModal();
     });
 
+    cpnsShortsTrigger.addEventListener('click', openCpnsShorts);
+    cpnsClose.addEventListener('click', closeCpnsShorts);
+    cpnsOverlay.addEventListener('click', (event) => {
+      if (event.target === cpnsOverlay) closeCpnsShorts();
+    });
+
     searchTrigger.addEventListener('click', openSearch);
     searchClose.addEventListener('click', closeSearch);
     searchOverlay.addEventListener('click', (event) => {
@@ -3985,6 +4674,9 @@
       if (event.key === 'Escape' && banksoalOverlay.classList.contains('active')) {
         closeBankSoal();
       }
+      if (event.key === 'Escape' && cpnsOverlay.classList.contains('active')) {
+        closeCpnsShorts();
+      }
       if (event.key === 'Escape' && searchOverlay.classList.contains('active')) {
         closeSearch();
       }
@@ -3994,52 +4686,6 @@
     banksoalOverlay.addEventListener('click', (event) => {
       if (event.target === banksoalOverlay) closeBankSoal();
     });
-
-    /* ============================================================
-       SAFARI iPHONE: warna rubber-band berbeda untuk atas dan bawah.
-
-       Safari memakai background elemen root (<html>) untuk area kosong yang
-       terlihat ketika pengguna menarik halaman melewati batas scroll. Satu
-       background statis tidak dapat menjamin warna berbeda di dua ujung pada
-       Safari iOS, jadi kita mengganti class root berdasarkan posisi scroll:
-       - selama bukan di ujung bawah -> #F3F6F7 (aman untuk overscroll atas)
-       - tepat di ujung bawah       -> #104862 (aman untuk overscroll bawah)
-
-       Pergantian ini tidak mengubah warna konten situs karena .page-background
-       tetap menutupi root. Yang berubah hanya lapisan paling belakang yang
-       biasanya baru terlihat saat efek rubber-band Safari muncul.
-       ============================================================ */
-    const overscrollRoot = document.documentElement;
-    let overscrollBackgroundFrame = 0;
-
-    function syncSafariOverscrollBackground() {
-      overscrollBackgroundFrame = 0;
-
-      const scrollElement = document.scrollingElement || document.documentElement;
-      const scrollTop = Math.max(0, window.scrollY || scrollElement.scrollTop || 0);
-      const maxScrollTop = Math.max(0, scrollElement.scrollHeight - scrollElement.clientHeight);
-
-      /* Toleransi beberapa pixel diperlukan karena Safari dapat berhenti pada
-         nilai sub-pixel / membulatkan tinggi viewport ketika toolbar berubah. */
-      const atBottom = maxScrollTop <= 1 || (maxScrollTop - scrollTop) <= 6;
-      overscrollRoot.classList.toggle('overscroll-at-bottom', atBottom);
-    }
-
-    function scheduleSafariOverscrollBackgroundSync() {
-      if (overscrollBackgroundFrame) return;
-      overscrollBackgroundFrame = requestAnimationFrame(syncSafariOverscrollBackground);
-    }
-
-    window.addEventListener('scroll', scheduleSafariOverscrollBackgroundSync, { passive: true });
-    window.addEventListener('resize', scheduleSafariOverscrollBackgroundSync, { passive: true });
-    window.addEventListener('orientationchange', scheduleSafariOverscrollBackgroundSync, { passive: true });
-    window.addEventListener('pageshow', scheduleSafariOverscrollBackgroundSync, { passive: true });
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', scheduleSafariOverscrollBackgroundSync, { passive: true });
-    }
-
-    syncSafariOverscrollBackground();
 
     setKurikulumLevel(currentLevel);
     initStaticBankSoalButtons();
