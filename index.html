@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" href="images/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Teachers:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&amp;family=Teachers:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #012B2E;
@@ -1420,10 +1420,8 @@
           Umum, atau tombol "Tes Tulis"): cukup tambahkan atribut
           data-banksoal-free="link" data-banksoal-premium="link"
           langsung di tag <button>-nya.
-       Gambar paket (images/ebook1.png untuk gratis,
-       images/ebook2.png untuk premium) SAMA untuk semua badge di
-       seluruh situs — yang berbeda per badge hanyalah dua link di
-       atas.
+       Satu bottom sheet native dipakai ulang untuk semua badge;
+       yang berubah per badge hanyalah nama materi dan kedua URL.
        ============================================================ */
     .banksoal-anchor {
       position: relative;
@@ -1476,6 +1474,11 @@
       transform: translateY(-50%) scale(0.96) !important;
     }
 
+    .banksoal-anchor .banksoal-badge:focus-visible {
+      outline: 3px solid rgba(255, 255, 0, 0.75);
+      outline-offset: 3px;
+    }
+
     @media (hover: hover) and (pointer: fine) {
       .banksoal-anchor .banksoal-badge:hover {
         background: #2f5fe0;
@@ -1516,198 +1519,640 @@
     }
 
     /* ============================================================
-       ===== Modal Bank Soal (redesign): container hitam pekat
-       50% opacity + sudut membulat, menampilkan dua kartu pricing
-       PENUH (ebook1.png / ebook2.png, rasio 4:7). Di atas tiap kartu
-       ditumpuk lapisan gambar button terpisah (ebook1_button.png /
-       ebook2_button.png) — kanvasnya PERSIS sama ukurannya dengan
-       kartu penuhnya (1600x2800) dan transparan di luar area button,
-       jadi cukup ditumpuk pas di posisi yang sama (inset:0) supaya
-       otomatis presisi tanpa perlu koordinat manual. Efek hover/klik
-       diterapkan ke lapisan button ini saja. ============================================================ */
+       ===== Bottom sheet Ebook Bank Soal =====
+       Seluruh tampilan dibuat native dengan HTML/CSS. URL versi Free
+       dan Premium tetap berasal dari properti `bankSoal` pada data
+       atau atribut data-banksoal-* pada button pemicu. ============================================================ */
     .banksoal-overlay {
       position: fixed;
       inset: 0;
-      display: none;
-      align-items: center;
+      display: flex;
+      align-items: flex-end;
       justify-content: center;
-      background: rgba(15,23,42,0.55);
-      z-index: 200;
-      padding: 1rem;
+      height: var(--banksoal-vvh, 100dvh);
+      background: rgba(2, 12, 18, 0.66);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 220;
+      padding: 0;
       box-sizing: border-box;
+      overscroll-behavior: contain;
+      transition: opacity 0.24s ease, visibility 0s linear 0.24s;
     }
 
     .banksoal-overlay.active {
-      display: flex;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition-delay: 0s;
     }
 
     .banksoal-panel {
       position: relative;
-      width: auto;
-      max-width: min(94vw, 720px);
-      max-height: calc(100vh - 2rem);
-      overflow: auto;
-      background: rgba(0,0,0,0.5);
-      border-radius: 24px;
-      padding: 1rem;
-      box-sizing: border-box;
-      animation: donationReveal 0.25s ease;
-    }
-
-    .banksoal-topbar {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      margin-bottom: 0.85rem;
+      flex-direction: column;
+      width: 100%;
+      height: auto;
+      max-height: calc(var(--banksoal-vvh, 100dvh) - 0.35rem);
+      overflow: hidden;
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 26px 26px 0 0;
+      box-shadow: 0 -18px 55px rgba(2, 12, 18, 0.22);
+      box-sizing: border-box;
+      transform: translateY(102%);
+      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+      outline: none;
     }
 
-    .banksoal-source {
-      margin: 0;
-      color: #fff;
-      font-family: 'Teachers', sans-serif;
-      font-weight: 700;
-      font-size: 0.92rem;
-      line-height: 1.3;
+    .banksoal-overlay.active .banksoal-panel {
+      transform: translateY(0);
+    }
+
+    .banksoal-drag-handle {
+      flex: 0 0 auto;
+      width: 42px;
+      height: 4px;
+      margin: 0.65rem auto 0;
+      border-radius: 999px;
+      background: #cbd5e1;
     }
 
     .banksoal-close {
-      flex-shrink: 0;
-      width: 34px;
-      height: 34px;
+      position: absolute;
+      top: 0.72rem;
+      right: max(0.9rem, env(safe-area-inset-right));
+      z-index: 4;
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
-      border-radius: 999px;
-      border: 1.5px solid rgba(255,255,255,0.5);
-      background: rgba(255,255,255,0.12);
-      color: #fff;
-      font-size: 1.2rem;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: #334155;
+      font: inherit;
+      font-size: 1.45rem;
+      font-weight: 400;
       line-height: 1;
       cursor: pointer;
-      transition: background 0.2s ease, transform 0.15s ease;
+      touch-action: manipulation;
+      transition: background 0.18s ease, color 0.18s ease, transform 0.15s ease;
     }
 
     .banksoal-close:active {
       transform: scale(0.92);
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      .banksoal-close:hover {
-        background: rgba(255,255,255,0.25);
-      }
+    .banksoal-close:focus-visible,
+    .banksoal-option:focus-visible,
+    .banksoal-cta:focus-visible {
+      outline: 3px solid rgba(29, 78, 216, 0.5);
+      outline-offset: 3px;
+    }
+
+    .banksoal-scroll {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+
+    .banksoal-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .banksoal-scroll::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.18);
+    }
+
+    .banksoal-content {
+      --banksoal-cta-gap: 1.4rem;
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 0.7rem 1rem 0;
+    }
+
+    .banksoal-header {
+      padding-right: 2.8rem;
+    }
+
+    .banksoal-eyebrow {
+      margin: 0 0 0.15rem;
+      color: #104862;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .banksoal-source {
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(1.28rem, 5vw, 1.8rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.16;
+    }
+
+    .banksoal-intro {
+      margin-top: 0.72rem;
+    }
+
+    .banksoal-intro h3 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .banksoal-intro p {
+      margin: 0.18rem 0 0;
+      color: #64748b;
+      font-size: 0.78rem;
+      line-height: 1.4;
     }
 
     .banksoal-choices {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      justify-items: center;
-      gap: 0.6rem;
+      gap: 0.65rem;
+      margin-top: 0.75rem;
     }
 
-    .banksoal-card {
+    .banksoal-option {
       position: relative;
-      display: block;
-      width: 100%;
-      aspect-ratio: 4 / 7;
-      /* Pengaman tambahan: kalau layar pendek (mis. hp mode landscape),
-         kartu ikut mengecil berdasarkan tinggi layar juga, bukan cuma
-         lebar — supaya tidak sampai perlu scroll di orientasi itu. */
-      max-height: min(78vh, 620px);
-      border-radius: 12px;
-      overflow: hidden;
-      background: #f1f5f9;
-      text-decoration: none;
-    }
-
-    .banksoal-card-bg,
-    .banksoal-card-btn {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .banksoal-card-bg {
-      pointer-events: none;
-    }
-
-    .banksoal-card-btn {
-      pointer-events: none;
-      transition: transform 0.18s ease, filter 0.18s ease;
-    }
-
-    /* "Hotspot": area tak-terlihat yang posisi & ukurannya dihitung
-       persis dari bounding-box asli ebook1_button.png / ebook2_button.png
-       (bagian yang tidak transparan). Efek hover/klik hanya menyala
-       kalau cursor betul-betul di atas hotspot ini — bukan di
-       seluruh kartu — memakai selector "~" (general sibling) untuk
-       menyalakan efek pada lapisan .banksoal-card-btn di sebelahnya. */
-    .banksoal-card-hotspot {
-      position: absolute;
-      z-index: 2;
+      min-width: 0;
+      min-height: 92px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 0.8rem 0.78rem;
+      border: 1.5px solid #dbe3e8;
+      border-radius: 26px;
+      background: #ffffff;
+      color: #0f172a;
+      font-family: 'Montserrat', sans-serif;
+      text-align: left;
       cursor: pointer;
+      touch-action: manipulation;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.16s ease, box-shadow 0.2s ease;
+    }
+
+    .banksoal-option.is-active {
+      border-color: #104862;
+      border-width: 2px;
+      background: #f1f7f8;
+      box-shadow: none;
+    }
+
+    /* Premium aktif: kemegahan ditempatkan pada outline gradasi,
+       sementara bidang kartu tetap bersih. Di mobile gradasi ini
+       sengaja statis agar ringan dan tidak mengganggu perhatian. */
+    .banksoal-option[data-banksoal-plan="premium"].is-active {
+      border: 2px solid transparent;
+      background:
+        linear-gradient(#f1f7f8, #f1f7f8) padding-box,
+        linear-gradient(
+          115deg,
+          #104862 0%,
+          #104862 54%,
+          #1d4ed8 80%,
+          #ffd700 94%,
+          #104862 100%
+        ) border-box;
+      box-shadow: none;
+    }
+
+    .banksoal-option:active {
+      transform: scale(0.985);
+    }
+
+    .banksoal-option-name {
+      display: block;
+      color: #0f172a;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.16rem;
+      font-weight: 800;
+      letter-spacing: 0.025em;
+      line-height: 1.2;
+    }
+
+    .banksoal-option-copy {
+      display: block;
+      margin-top: 0.28rem;
+      color: #64748b;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .banksoal-benefits {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      margin-top: 0.85rem;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    .banksoal-benefits h3 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 0.92rem;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .banksoal-benefit-list {
+      flex: 1 1 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      align-content: space-between;
+      gap: 0.42rem;
+      margin: 0.55rem 0 0;
+      padding: 0 0 0 0.42rem;
+      list-style: none;
+    }
+
+    .banksoal-benefit-list li {
+      position: relative;
+      margin: 0;
+      padding-left: 1.42rem;
+      color: #334155;
+      font-size: 0.78rem;
+      font-weight: 600;
+      line-height: 1.36;
+    }
+
+    .banksoal-benefit-list li::before {
+      content: '\2713';
+      position: absolute;
+      top: -0.02rem;
+      left: 0;
+      display: grid;
+      place-items: center;
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      background: #e6f4ee;
+      color: #16794b;
+      font-size: 0.68rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .banksoal-level {
+      font-weight: 800;
+    }
+
+    .banksoal-level-lots {
+      color: #15803d;
+    }
+
+    .banksoal-level-mots {
+      color: #b7791f;
+    }
+
+    .banksoal-level-hots {
+      color: #dc2626;
+    }
+
+    .banksoal-cta-area {
+      position: relative;
+      width: 100%;
+      margin-top: var(--banksoal-cta-gap);
+      padding: 0 0 calc(var(--banksoal-cta-gap) + env(safe-area-inset-bottom));
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .banksoal-cta {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      width: min(100%, 760px);
+      min-height: 54px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem 1rem;
+      border-radius: 999px;
+      background: #104862;
+      color: #ffffff;
+      text-align: center;
+      text-decoration: none;
+      touch-action: manipulation;
+      transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+    }
+
+    .banksoal-cta.is-premium:not([aria-disabled="true"]) {
+      background: linear-gradient(
+        115deg,
+        #0d3d54 0%,
+        #104862 48%,
+        #1d4ed8 82%,
+        #104862 100%
+      );
+      box-shadow: none;
+    }
+
+    .banksoal-cta-label,
+    .banksoal-cta-note {
+      position: relative;
+      z-index: 1;
+    }
+
+    .banksoal-cta[aria-disabled="true"] {
+      background: #94a3b8;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .banksoal-cta:active {
+      transform: scale(0.99);
+    }
+
+    .banksoal-cta-label {
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.035em;
+      line-height: 1.25;
+    }
+
+    .banksoal-cta-note {
+      margin-top: 0.12rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+    }
+
+    .banksoal-cta-note:empty {
+      display: none;
     }
 
     @media (hover: hover) and (pointer: fine) {
-      .banksoal-card-hotspot:hover ~ .banksoal-card-btn {
-        transform: translateY(-5px);
-        filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35));
+      .banksoal-close:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+      }
+
+      .banksoal-option:hover {
+        border-color: #7895a4;
+        background: #f8fbfc;
+      }
+
+      .banksoal-option.is-active:not([data-banksoal-plan="premium"]):hover {
+        border-color: #104862;
+        background: #f1f7f8;
+      }
+
+      .banksoal-cta:not(.is-premium):not([aria-disabled="true"]):hover {
+        background: #0c3b51;
+        box-shadow: none;
       }
     }
 
-    .banksoal-card-hotspot:active ~ .banksoal-card-btn {
-      transform: translateY(0);
-      filter: brightness(1.15) drop-shadow(0 0 10px rgba(255,255,255,0.65));
+    @media (min-width: 560px) {
+      .banksoal-content {
+        padding: 1rem 1.5rem 0;
+      }
+
     }
 
-    @media (max-width: 380px) {
+    @media (max-width: 359px) {
+      .banksoal-content {
+        padding-right: 0.75rem;
+        padding-left: 0.75rem;
+      }
+
+      .banksoal-option {
+        min-height: 88px;
+        padding: 0.7rem 0.62rem;
+      }
+
+      .banksoal-option-name {
+        font-size: 1.02rem;
+      }
+
+      .banksoal-option-copy {
+        font-size: 0.66rem;
+      }
+    }
+
+    /* Desktop memakai modal satu layar penuh; isi tetap terpusat dan
+       dibatasi lebarnya agar mudah dipindai tanpa terlihat kosong. */
+    @media (min-width: 768px) {
       .banksoal-panel {
-        padding: 0.8rem;
-        border-radius: 20px;
+        height: 100vh;
+        height: 100dvh;
+        max-height: var(--banksoal-vvh, 100dvh);
+        border-radius: 0;
       }
 
-      .banksoal-choices {
-        gap: 0.45rem;
-      }
-
-      .banksoal-source {
-        font-size: 0.8rem;
+      .banksoal-drag-handle {
+        display: none;
       }
 
       .banksoal-close {
-        width: 30px;
-        height: 30px;
-        font-size: 1.05rem;
+        top: 1rem;
+        right: 1.25rem;
+        width: 44px;
+        height: 44px;
       }
-    }
 
-    /* ----- Versi PC/desktop: kartu diatur berdasarkan TINGGI layar
-       (vh) supaya modal selalu muat satu layar tanpa scroll, dan
-       ditampilkan besar & mengesankan (sesuai maksud desain baru
-       ini). Versi HP (portrait) tetap memakai lebar penuh seperti di
-       atas. ----- */
-    @media (min-width: 768px) {
-      .banksoal-panel {
-        padding: 1.4rem 1.5rem;
+      .banksoal-scroll {
+        display: flex;
+      }
+
+      .banksoal-content {
+        align-self: center;
+        width: min(100%, 920px);
+        padding: 1.4rem 2rem 0;
+      }
+
+      .banksoal-header,
+      .banksoal-intro {
+        text-align: center;
+      }
+
+      .banksoal-header {
+        padding: 0 3rem;
       }
 
       .banksoal-source {
-        font-size: 1.05rem;
+        font-size: clamp(1.8rem, 3vw, 2.6rem);
+      }
+
+      .banksoal-intro {
+        margin-top: 0.9rem;
+      }
+
+      .banksoal-intro h3 {
+        font-size: 1.15rem;
+      }
+
+      .banksoal-intro p {
+        font-size: 0.88rem;
       }
 
       .banksoal-choices {
-        grid-template-columns: repeat(2, max-content);
-        justify-content: center;
-        justify-items: center;
-        gap: 1.1rem;
+        gap: 1rem;
+        max-width: 760px;
+        margin: 1rem auto 0;
       }
 
-      .banksoal-card {
-        width: auto;
-        height: min(72vh, 620px);
+      .banksoal-option {
+        min-height: 112px;
+        padding: 1rem 1.1rem;
       }
+
+      .banksoal-option-name {
+        font-size: 1.34rem;
+      }
+
+      .banksoal-option-copy {
+        font-size: 0.82rem;
+      }
+
+      .banksoal-benefits {
+        max-width: 760px;
+        margin: 1rem auto 0;
+        padding: 0;
+      }
+
+      .banksoal-benefit-list li {
+        font-size: 0.86rem;
+      }
+
+      .banksoal-cta {
+        width: min(100%, 760px);
+        min-height: 58px;
+      }
+
+      .banksoal-cta-area {
+        max-width: 760px;
+        margin: var(--banksoal-cta-gap) auto 0;
+        padding-bottom: var(--banksoal-cta-gap);
+      }
+    }
+
+    /* Desktop: outline Premium dan CTA bergerak perlahan seperti pantulan
+       cahaya. Tidak ada glow atau shadow tambahan. */
+    @media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+      .banksoal-option[data-banksoal-plan="premium"].is-active {
+        background:
+          linear-gradient(#f1f7f8, #f1f7f8) padding-box,
+          linear-gradient(
+            110deg,
+            #104862 0%,
+            #104862 34%,
+            #1d4ed8 44%,
+            #ffd700 48%,
+            #ffffff 50%,
+            #ffd700 52%,
+            #1d4ed8 58%,
+            #104862 68%,
+            #104862 100%
+          ) border-box;
+        background-size: 100% 100%, 300% 100%;
+        animation: banksoalPremiumBorderFlow 4.2s linear infinite;
+      }
+
+      .banksoal-cta.is-premium:not([aria-disabled="true"]) {
+        background: linear-gradient(
+          110deg,
+          #0d3d54 0%,
+          #104862 30%,
+          #1d4ed8 50%,
+          #104862 70%,
+          #104862 100%
+        );
+        background-size: 240% 100%;
+        animation: banksoalPremiumCtaFlow 5.2s ease-in-out infinite alternate;
+      }
+
+      .banksoal-cta.is-premium:not([aria-disabled="true"])::after {
+        content: '';
+        position: absolute;
+        z-index: 0;
+        top: -55%;
+        bottom: -55%;
+        left: -45%;
+        width: 22%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 215, 0, 0.28),
+          rgba(255, 255, 255, 0.8),
+          rgba(255, 215, 0, 0.22),
+          transparent
+        );
+        pointer-events: none;
+        transform: skewX(-18deg);
+        animation: banksoalPremiumSheen 4.4s ease-in-out infinite;
+      }
+    }
+
+    @keyframes banksoalPremiumBorderFlow {
+      from { background-position: 0 0, 0% 50%; }
+      to { background-position: 0 0, 200% 50%; }
+    }
+
+    @keyframes banksoalPremiumCtaFlow {
+      from { background-position: 0% 50%; }
+      to { background-position: 100% 50%; }
+    }
+
+    @keyframes banksoalPremiumSheen {
+      0%, 22% {
+        left: -45%;
+        opacity: 0;
+      }
+      34% {
+        opacity: 0.72;
+      }
+      58% {
+        left: 120%;
+        opacity: 0;
+      }
+      100% {
+        left: 120%;
+        opacity: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .banksoal-overlay,
+      .banksoal-panel,
+      .banksoal-option,
+      .banksoal-cta,
+      .banksoal-close {
+        transition-duration: 0.01ms !important;
+      }
+
+      .banksoal-option[data-banksoal-plan="premium"].is-active,
+      .banksoal-cta.is-premium,
+      .banksoal-cta.is-premium::after {
+        animation: none !important;
+      }
+
     }
 
     /* ===== Footer ===== */
@@ -2767,26 +3212,48 @@
     </div>
   </div>
 
-  <!-- Modal "Bank Soal": satu modal dipakai ulang untuk SEMUA badge Bank
-       Soal di halaman ini. Isinya (link Gratis & Premium) diganti lewat
-       JavaScript setiap kali sebuah badge Bank Soal diklik. -->
+  <!-- Bottom sheet ini dipakai ulang untuk semua badge Bank Soal.
+       Nama materi dan URL CTA diisi dari button pemicu lewat JavaScript. -->
   <div class="banksoal-overlay" id="banksoalOverlay" aria-hidden="true">
-    <div class="banksoal-panel" role="dialog" aria-modal="true" aria-labelledby="banksoalSource">
-      <div class="banksoal-topbar">
-        <p class="banksoal-source" id="banksoalSource">Bank Soal</p>
-        <button type="button" class="banksoal-close" id="banksoalClose" aria-label="Tutup Bank Soal">×</button>
-      </div>
-      <div class="banksoal-choices">
-        <a class="banksoal-card" id="banksoalFreeCard" href="#" target="_blank" rel="noopener noreferrer" aria-label="Bank Soal versi gratis">
-          <img class="banksoal-card-bg" data-src="images/ebook1.png" alt="">
-          <span class="banksoal-card-hotspot" style="left:7.19%; top:90.68%; width:85.62%; height:6.64%;"></span>
-          <img class="banksoal-card-btn" data-src="images/ebook1_button.png" alt="">
-        </a>
-        <a class="banksoal-card" id="banksoalPremiumCard" href="#" target="_blank" rel="noopener noreferrer" aria-label="Bank Soal versi premium">
-          <img class="banksoal-card-bg" data-src="images/ebook2.png" alt="">
-          <span class="banksoal-card-hotspot" style="left:6.69%; top:89.82%; width:86.31%; height:7.43%;"></span>
-          <img class="banksoal-card-btn" data-src="images/ebook2_button.png" alt="">
-        </a>
+    <div class="banksoal-panel" id="banksoalPanel" role="dialog" aria-modal="true" aria-labelledby="banksoalTitle banksoalSource" aria-describedby="banksoalSubtitle" tabindex="-1">
+      <div class="banksoal-drag-handle" aria-hidden="true"></div>
+      <button type="button" class="banksoal-close" id="banksoalClose" aria-label="Tutup panel Ebook Bank Soal">×</button>
+
+      <div class="banksoal-scroll" id="banksoalScroll">
+        <div class="banksoal-content">
+          <header class="banksoal-header">
+            <p class="banksoal-eyebrow" id="banksoalTitle">Ebook Bank Soal</p>
+            <h2 class="banksoal-source" id="banksoalSource">Materi pilihan Anda</h2>
+          </header>
+
+          <div class="banksoal-intro">
+            <h3>Pilih Versi Bank Soal</h3>
+            <p id="banksoalSubtitle">Pilih versi yang sesuai dengan kebutuhan belajar Anda.</p>
+          </div>
+
+          <div class="banksoal-choices" role="radiogroup" aria-label="Versi Ebook Bank Soal">
+            <button type="button" class="banksoal-option is-active" id="banksoalFreeOption" role="radio" aria-checked="true" data-banksoal-plan="free">
+              <span class="banksoal-option-name">GRATIS</span>
+              <span class="banksoal-option-copy">Untuk mulai berlatih</span>
+            </button>
+            <button type="button" class="banksoal-option" id="banksoalPremiumOption" role="radio" aria-checked="false" data-banksoal-plan="premium">
+              <span class="banksoal-option-name">PREMIUM</span>
+              <span class="banksoal-option-copy">Untuk latihan lebih lengkap</span>
+            </button>
+          </div>
+
+          <section class="banksoal-benefits" aria-labelledby="banksoalBenefitsTitle" aria-live="polite">
+            <h3 id="banksoalBenefitsTitle">Yang Anda dapatkan:</h3>
+            <ul class="banksoal-benefit-list" id="banksoalBenefitList"></ul>
+          </section>
+
+          <div class="banksoal-cta-area">
+            <a class="banksoal-cta" id="banksoalCta" href="#" target="_blank" rel="noopener noreferrer">
+              <span class="banksoal-cta-label" id="banksoalCtaLabel">DOWNLOAD GRATIS</span>
+              <span class="banksoal-cta-note" id="banksoalCtaNote"></span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2949,19 +3416,69 @@
     const cpnsWatchLink = document.getElementById('cpnsWatchLink');
 
     const banksoalOverlay = document.getElementById('banksoalOverlay');
+    const banksoalPanel = document.getElementById('banksoalPanel');
     const banksoalClose = document.getElementById('banksoalClose');
-    const banksoalFreeCard = document.getElementById('banksoalFreeCard');
-    const banksoalPremiumCard = document.getElementById('banksoalPremiumCard');
+    const banksoalScroll = document.getElementById('banksoalScroll');
     const banksoalSource = document.getElementById('banksoalSource');
+    const banksoalPlanOptions = Array.from(document.querySelectorAll('[data-banksoal-plan]'));
+    const banksoalBenefits = document.querySelector('.banksoal-benefits');
+    const banksoalBenefitsTitle = document.getElementById('banksoalBenefitsTitle');
+    const banksoalBenefitList = document.getElementById('banksoalBenefitList');
+    const banksoalCta = document.getElementById('banksoalCta');
+    const banksoalCtaLabel = document.getElementById('banksoalCtaLabel');
+    const banksoalCtaNote = document.getElementById('banksoalCtaNote');
+    let banksoalActivePlan = 'free';
+    let banksoalCurrentLinks = { free: '', premium: '' };
+    let banksoalLastTrigger = null;
+
+    const BANKSOAL_PLANS = {
+      free: {
+        ctaLabel: 'DOWNLOAD GRATIS',
+        ctaNote: '',
+        benefitsTitle: 'Yang Anda dapatkan:',
+        benefits: [
+          'Jumlah soal satuan hingga puluhan',
+          'Mencakup materi inti',
+          'Beberapa gambar dan diagram',
+          'Soal berkualitas',
+          'Ada kunci jawaban dan link belajar'
+        ]
+      },
+      premium: {
+        ctaLabel: 'DAPATKAN PREMIUM',
+        ctaNote: 'SEHARGA NGOPI',
+        benefitsTitle: 'Semua yang ada di mode gratis ditambah:',
+        benefits: [
+          'Jumlah soal jauh lebih banyak (puluhan hingga ratusan)',
+          'Level kesulitan beragam (LOTS, MOTS, HOTS)',
+          'Gambar dan grafik lebih lengkap',
+          'Pola soal lebih variatif',
+          'Cakupan materi lebih lengkap',
+          'QR atau link menuju video pembelajaran',
+          'Dibuat layaknya buku',
+          'Dirancang dengan ketelitian ekstra'
+        ]
+      }
+    };
 
     // ============================================================
     // ===== BANK SOAL: fungsi inti (reusable) =====
     // ============================================================
 
+    // Menyamakan penulisan konteks sekolah, misalnya:
+    // "Kelas 8 | Bab 9: Kucing Ayam". Nama kelas diambil otomatis
+    // dari struktur KURIKULUM_DATA, jadi tidak perlu diketik pada tiap link.
+    function buildSchoolBankSoalLabel(classLabel, detailLabel = '') {
+      const normalizedDetail = String(detailLabel || '')
+        .trim()
+        .replace(/^BAB\b/i, 'Bab');
+      return [classLabel, normalizedDetail].filter(Boolean).join(' | ');
+    }
+
     // Menempelkan badge kecil "Bank Soal" tepat di atas sebuah button
     // besar yang sudah ada, tanpa mengubah perilaku klik button itu
     // sendiri. `links` = { free: 'url', premium: 'url' }.
-    function attachBankSoalBadge(buttonEl, links) {
+    function attachBankSoalBadge(buttonEl, links, sourceLabel = '') {
       if (!buttonEl || !buttonEl.parentNode) return null;
       if (!links || (!links.free && !links.premium)) return null;
       // Jangan pasang dua kali pada button yang sama.
@@ -2996,9 +3513,9 @@
         // (mis. "BAB 1: Bilangan Bulat") — tidak perlu diisi manual.
         // Mau pakai teks lain? Tambahkan `label: '...'` di dalam
         // bankSoal-nya, itu akan dipakai sebagai pengganti.
-        const source = (links.label && links.label.trim())
+        const source = sourceLabel || ((links.label && links.label.trim())
           ? links.label.trim()
-          : buttonEl.textContent.trim();
+          : buttonEl.textContent.trim());
         openBankSoal(links, source);
       });
 
@@ -3021,34 +3538,123 @@
       });
     }
 
-    // Gambar kartu (ebook1/ebook2 + versi button-nya) baru diminta ke
-    // server saat modal PERTAMA KALI dibuka — bukan langsung ikut
-    // ter-load saat halaman dibuka — supaya loading awal situs tetap
-    // ringan bagi pengunjung yang tidak membuka Bank Soal.
-    function loadBankSoalImages() {
-      banksoalOverlay.querySelectorAll('img[data-src]').forEach((img) => {
-        if (!img.getAttribute('src')) {
-          img.src = img.dataset.src;
-        }
+    function renderBankSoalBenefits(planData) {
+      banksoalBenefitsTitle.textContent = planData.benefitsTitle;
+      banksoalBenefitList.replaceChildren(...planData.benefits.map((benefit) => {
+        const item = document.createElement('li');
+        const fragments = benefit.split(/\b(LOTS|MOTS|HOTS)\b/g);
+        fragments.forEach((fragment) => {
+          if (!fragment) return;
+          if (/^(LOTS|MOTS|HOTS)$/.test(fragment)) {
+            const level = document.createElement('strong');
+            level.className = `banksoal-level banksoal-level-${fragment.toLowerCase()}`;
+            level.textContent = fragment;
+            item.appendChild(level);
+          } else {
+            item.appendChild(document.createTextNode(fragment));
+          }
+        });
+        return item;
+      }));
+    }
+
+    // Panel masih tersembunyi ketika versi Premium diukur. Tinggi hasil
+    // pengukuran dipakai oleh Free dan Premium, jadi kartu pilihan serta
+    // CTA selalu menempati posisi yang sama sejak panel mulai terlihat.
+    function reservePremiumBankSoalSpace() {
+      banksoalBenefits.style.height = 'auto';
+      renderBankSoalBenefits(BANKSOAL_PLANS.premium);
+      const premiumHeight = Math.ceil(banksoalBenefits.getBoundingClientRect().height);
+      if (premiumHeight > 0) {
+        banksoalBenefits.style.height = `${premiumHeight}px`;
+      }
+    }
+
+    // Mengganti benefit, URL, CTA, dan visual kartu tanpa me-render ulang
+    // seluruh modal. URL tetap dibaca dari data Bank Soal yang sudah ada.
+    function setBankSoalPlan(plan) {
+      if (!BANKSOAL_PLANS[plan]) return;
+
+      banksoalActivePlan = plan;
+      const planData = BANKSOAL_PLANS[plan];
+      const destination = banksoalCurrentLinks[plan] || '';
+
+      banksoalPlanOptions.forEach((option) => {
+        const isActive = option.dataset.banksoalPlan === plan;
+        option.classList.toggle('is-active', isActive);
+        option.setAttribute('aria-checked', String(isActive));
+        option.tabIndex = isActive ? 0 : -1;
       });
+
+      renderBankSoalBenefits(planData);
+
+      banksoalCtaLabel.textContent = planData.ctaLabel;
+      banksoalCtaNote.textContent = planData.ctaNote;
+      banksoalCta.classList.toggle('is-premium', plan === 'premium');
+      if (destination) {
+        banksoalCta.href = destination;
+        banksoalCta.removeAttribute('aria-disabled');
+        banksoalCta.setAttribute('aria-label', plan === 'premium'
+          ? 'Dapatkan Ebook Bank Soal Premium'
+          : 'Download Ebook Bank Soal Gratis');
+      } else {
+        banksoalCta.removeAttribute('href');
+        banksoalCta.setAttribute('aria-disabled', 'true');
+        banksoalCta.setAttribute('aria-label', `${planData.ctaLabel} — belum tersedia`);
+      }
+    }
+
+    // Menyesuaikan tinggi overlay dengan area Safari/iPhone yang benar-benar
+    // terlihat, termasuk saat toolbar browser berubah ukuran.
+    function applyBankSoalViewportFix() {
+      if (!banksoalOverlay.classList.contains('active')) return;
+      const vv = window.visualViewport;
+      if (!vv) return;
+
+      document.documentElement.style.setProperty('--banksoal-vvh', `${vv.height}px`);
+      banksoalOverlay.style.height = `${vv.height}px`;
+      banksoalOverlay.style.top = `${vv.offsetTop}px`;
+    }
+
+    function resetBankSoalViewportFix() {
+      document.documentElement.style.removeProperty('--banksoal-vvh');
+      banksoalOverlay.style.height = '';
+      banksoalOverlay.style.top = '';
     }
 
     function openBankSoal(links, source) {
-      const freeLink = (links && links.free) ? links.free : '#';
-      const premiumLink = (links && links.premium) ? links.premium : '#';
-      banksoalFreeCard.href = freeLink;
-      banksoalPremiumCard.href = premiumLink;
-      banksoalSource.textContent = source ? `Bank soal untuk: ${source}` : 'Bank Soal';
-      loadBankSoalImages();
+      banksoalLastTrigger = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+      banksoalCurrentLinks = {
+        free: (links && links.free) ? links.free : '',
+        premium: (links && links.premium) ? links.premium : ''
+      };
+      banksoalSource.textContent = source || 'Materi pilihan Anda';
+      reservePremiumBankSoalSpace();
+      setBankSoalPlan('free');
+      banksoalScroll.scrollTop = 0;
       banksoalOverlay.classList.add('active');
       banksoalOverlay.setAttribute('aria-hidden', 'false');
       refreshBodyScrollLock();
+      applyBankSoalViewportFix();
+
+      requestAnimationFrame(() => {
+        banksoalPanel.focus({ preventScroll: true });
+      });
     }
 
     function closeBankSoal() {
+      const wasOpen = banksoalOverlay.classList.contains('active');
       banksoalOverlay.classList.remove('active');
       banksoalOverlay.setAttribute('aria-hidden', 'true');
       refreshBodyScrollLock();
+      resetBankSoalViewportFix();
+
+      if (wasOpen && banksoalLastTrigger && document.contains(banksoalLastTrigger)) {
+        banksoalLastTrigger.focus({ preventScroll: true });
+      }
+      banksoalLastTrigger = null;
     }
 
     const KURIKULUM_DATA = {
@@ -3824,7 +4430,7 @@
         });
 
         item.append(button, details);
-        if (kelas.bankSoal) attachBankSoalBadge(button, kelas.bankSoal);
+        if (kelas.bankSoal) attachBankSoalBadge(button, kelas.bankSoal, kelas.label);
         classesContainer.appendChild(item);
       });
     }
@@ -3842,7 +4448,8 @@
       if (Array.isArray(kelasData.topics)) {
         renderKurikulumTopics(
           { title: kelasData.label, topics: kelasData.topics },
-          container
+          container,
+          { classLabel: kelasData.label }
         );
         return;
       }
@@ -3874,7 +4481,11 @@
           container.querySelectorAll('button').forEach((btn) => btn.classList.remove('active'));
           chapterButton.classList.add('active');
           chapterDetails.classList.remove('hidden');
-          renderKurikulumTopics(bab, chapterDetails);
+          renderKurikulumTopics(
+            bab,
+            chapterDetails,
+            { classLabel: kelasData.label }
+          );
           renderKurikulumVideo('Pilih topik untuk menampilkan video.');
           if (!isSearchNavigation) {
             scrollToSearchTopic(chapterButton);
@@ -3882,12 +4493,18 @@
         });
 
         chapterItem.append(chapterButton, chapterDetails);
-        if (bab.bankSoal) attachBankSoalBadge(chapterButton, bab.bankSoal);
+        if (bab.bankSoal) {
+          attachBankSoalBadge(
+            chapterButton,
+            bab.bankSoal,
+            buildSchoolBankSoalLabel(kelasData.label, bab.title)
+          );
+        }
         container.appendChild(chapterItem);
       });
     }
 
-    function renderKurikulumTopics(chapterData, container) {
+    function renderKurikulumTopics(chapterData, container, schoolContext = {}) {
       container.innerHTML = '';
       const topicTitle = document.createElement('div');
       topicTitle.textContent = `Topik ${chapterData.title}`;
@@ -3935,7 +4552,13 @@
 
         topicDetails.appendChild(videoHolder);
         topicItem.append(topicButton, topicDetails);
-        if (topic.bankSoal) attachBankSoalBadge(topicButton, topic.bankSoal);
+        if (topic.bankSoal) {
+          attachBankSoalBadge(
+            topicButton,
+            topic.bankSoal,
+            buildSchoolBankSoalLabel(schoolContext.classLabel, topic.label)
+          );
+        }
         container.appendChild(topicItem);
       });
     }
@@ -4673,6 +5296,33 @@
       }
       if (event.key === 'Escape' && banksoalOverlay.classList.contains('active')) {
         closeBankSoal();
+        return;
+      }
+      if (event.key === 'Tab' && banksoalOverlay.classList.contains('active')) {
+        const focusable = Array.from(banksoalPanel.querySelectorAll(
+          'button:not([disabled]):not([tabindex="-1"]), a[href]:not([aria-disabled="true"]), [tabindex]:not([tabindex="-1"])'
+        )).filter((element) => !element.hidden);
+
+        if (!focusable.length) {
+          event.preventDefault();
+          banksoalPanel.focus({ preventScroll: true });
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const activeElement = document.activeElement;
+
+        if (!banksoalPanel.contains(activeElement)) {
+          event.preventDefault();
+          first.focus();
+        } else if (event.shiftKey && (activeElement === first || activeElement === banksoalPanel)) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
       if (event.key === 'Escape' && cpnsOverlay.classList.contains('active')) {
         closeCpnsShorts();
@@ -4686,6 +5336,47 @@
     banksoalOverlay.addEventListener('click', (event) => {
       if (event.target === banksoalOverlay) closeBankSoal();
     });
+
+    banksoalPlanOptions.forEach((option, index) => {
+      option.addEventListener('click', () => {
+        setBankSoalPlan(option.dataset.banksoalPlan);
+      });
+
+      option.addEventListener('keydown', (event) => {
+        const previousKeys = ['ArrowLeft', 'ArrowUp'];
+        const nextKeys = ['ArrowRight', 'ArrowDown'];
+        if (!previousKeys.includes(event.key) && !nextKeys.includes(event.key)) return;
+
+        event.preventDefault();
+        const direction = previousKeys.includes(event.key) ? -1 : 1;
+        const nextIndex = (index + direction + banksoalPlanOptions.length) % banksoalPlanOptions.length;
+        const nextOption = banksoalPlanOptions[nextIndex];
+        setBankSoalPlan(nextOption.dataset.banksoalPlan);
+        nextOption.focus();
+      });
+    });
+
+    banksoalCta.addEventListener('click', (event) => {
+      if (banksoalCta.getAttribute('aria-disabled') === 'true') {
+        event.preventDefault();
+      }
+    });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', applyBankSoalViewportFix);
+      window.visualViewport.addEventListener('scroll', applyBankSoalViewportFix);
+    }
+
+    let banksoalResizeFrame = 0;
+    window.addEventListener('resize', () => {
+      if (!banksoalOverlay.classList.contains('active')) return;
+      cancelAnimationFrame(banksoalResizeFrame);
+      banksoalResizeFrame = requestAnimationFrame(() => {
+        const activePlanData = BANKSOAL_PLANS[banksoalActivePlan];
+        reservePremiumBankSoalSpace();
+        renderBankSoalBenefits(activePlanData);
+      });
+    }, { passive: true });
 
     setKurikulumLevel(currentLevel);
     initStaticBankSoalButtons();
